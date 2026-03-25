@@ -6,11 +6,11 @@ const Button = ({ className, variant = 'primary', size = 'md', children, ...prop
   const baseStyles = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50';
   
   const variants = {
-    primary: 'bg-emerald-700 text-white hover:bg-emerald-800 shadow-sm',
-    secondary: 'bg-sky-700 text-white hover:bg-sky-800 shadow-sm',
-    outline: 'border border-emerald-700 text-emerald-700 hover:bg-emerald-50',
+    primary: 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm shadow-emerald-500/10',
+    secondary: 'bg-slate-900 text-white hover:bg-slate-800 shadow-sm shadow-slate-900/10',
+    outline: 'border border-emerald-600 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-700 hover:text-emerald-700',
     ghost: 'hover:bg-slate-100 text-slate-700',
-    link: 'text-emerald-700 underline-offset-4 hover:underline p-0',
+    link: 'text-emerald-600 underline-offset-4 hover:underline p-0',
   };
 
   const sizes = {

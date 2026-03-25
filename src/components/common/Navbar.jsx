@@ -57,13 +57,16 @@ const Navbar = () => {
               />
             </motion.div>
             <div className="flex flex-col max-w-[180px] md:max-w-[240px] lg:max-w-none">
-              <span className="font-extrabold text-sm md:text-base lg:text-lg leading-tight tracking-tight text-slate-900 group-hover:text-emerald-700 transition-colors font-serif uppercase text-nowrap">
+              <span className="font-extrabold text-sm md:text-base lg:text-lg leading-tight tracking-tight text-slate-900 group-hover:text-emerald-600 transition-colors font-serif uppercase text-nowrap">
                 Madhawi Shyam Educational Trust
               </span>
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
-                <span className="text-[9px] md:text-[10px] font-black text-slate-500 tracking-wider uppercase">BIOSPECTRA</span>
-                <span className="hidden md:inline text-slate-300">|</span>
-                <span className="text-[9px] md:text-[10px] font-bold text-emerald-600 tracking-widest uppercase opacity-90">Reg. No. 20560/IV-1815/2005</span>
+              <div className="flex flex-col mt-0.5">
+                <span className="text-[8px] md:text-[9px] font-black text-slate-500 tracking-wider uppercase leading-tight">
+                  & International Consortium of Contemporary Biologists (ICCB)
+                </span>
+                <span className="text-[8px] md:text-[9px] font-bold text-emerald-500 tracking-widest uppercase opacity-90 mt-0.5">
+                  Reg. No. 20560/IV-1815/2005
+                </span>
               </div>
             </div>
           </Link>
@@ -73,20 +76,41 @@ const Navbar = () => {
             <div className={`flex items-center transition-all duration-300 rounded-full p-1 shadow-sm ${scrolled ? 'bg-white/40 ring-1 ring-white/20' : 'bg-slate-100/30'}`}>
               {navLinks.map((link) => {
                 const isActive = pathname === link.path;
+
+                // Special styling for the Submit button to make it distinct but not too big
+                if (link.name === 'Submit') {
+                  return (
+                    <Link
+                      key={link.name}
+                      href={link.path}
+                      className={`ml-1 group relative px-5 xl:px-6 py-2 text-[12px] xl:text-[13px] whitespace-nowrap font-bold transition-all duration-300 outline-none ring-0 focus:outline-none rounded-2xl ${isActive ? 'bg-emerald-600 text-white shadow-md' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 hover:shadow-sm'}`}
+                    >
+                      <span className="relative z-10">{link.name}</span>
+                    </Link>
+                  );
+                }
+
                 return (
                   <Link
                     key={link.name}
                     href={link.path}
-                    className="relative px-3 xl:px-4 py-2 text-[12px] xl:text-[13px] whitespace-nowrap font-semibold transition-all duration-300 outline-none ring-0 focus:outline-none"
+                    className="group relative px-3 xl:px-4 py-2 text-[12px] xl:text-[13px] whitespace-nowrap font-semibold transition-all duration-300 outline-none ring-0 focus:outline-none rounded-full"
                   >
+                    {/* Hover Background Animation */}
+                    {!isActive && (
+                      <div className="absolute inset-0 bg-emerald-50/50 rounded-full scale-50 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-300 ease-out z-0"></div>
+                    )}
+                    
+                    {/* Active Background Animation */}
                     {isActive && (
                       <motion.div 
                         layoutId="nav-active"
-                        className="absolute inset-0 bg-white rounded-full shadow-md shadow-slate-200/50"
+                        className="absolute inset-0 bg-white rounded-full shadow-md shadow-slate-200/50 z-0"
                         transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
                       />
                     )}
-                    <span className={`relative z-10 transition-colors duration-300 ${isActive ? 'text-emerald-700' : 'text-slate-600 hover:text-slate-900 font-medium'}`}>
+
+                    <span className={`relative z-10 transition-colors duration-300 ${isActive ? 'text-emerald-600' : 'text-slate-600 group-hover:text-emerald-600 font-medium'}`}>
                       {link.name}
                     </span>
                   </Link>
@@ -124,7 +148,7 @@ const Navbar = () => {
                   onClick={() => setIsOpen(false)}
                   className={`text-lg font-bold p-4 rounded-2xl transition-all ${
                     pathname === link.path 
-                      ? 'bg-emerald-50 text-emerald-700' 
+                      ? 'bg-emerald-50 text-emerald-600' 
                       : 'text-slate-600 hover:bg-slate-50'
                   }`}
                 >

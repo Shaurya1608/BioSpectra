@@ -3,10 +3,11 @@
 :root {
   --text: #334155; /* slate-700 */
   --text-h: #0f172a; /* slate-900 */
-  --bg: #fff;
+  --bg: #fcfdfd; /* extremely light pearl */
   --border: #e2e8f0; /* slate-200 */
-  --accent: #047857; /* emerald-700 */
-  --accent-soft: rgba(4, 120, 87, 0.05);
+  --accent: #10b981; /* emerald-500 */
+  --accent-dark: #022c22; /* deep forest green */
+  --accent-soft: rgba(16, 185, 129, 0.05);
 
   font-family: var(--font-inter), sans-serif;
   color: var(--text);
