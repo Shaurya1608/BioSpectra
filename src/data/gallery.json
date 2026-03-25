@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "image": "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?q=80&w=1374&auto=format&fit=crop",
+    "caption": "Laboratory research in Molecular Biology",
+    "category": "Research"
+  },
+  {
+    "id": 2,
+    "image": "https://images.unsplash.com/photo-1507413245164-6160d8298b31?q=80&w=1470&auto=format&fit=crop",
+    "caption": "Microscopic view of plant cells",
+    "category": "Microscopy"
+  },
+  {
+    "id": 3,
+    "image": "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?q=80&w=1441&auto=format&fit=crop",
+    "caption": "Biodiversity in the tropical forest",
+    "category": "Life Science"
+  },
+  {
+    "id": 4,
+    "image": "https://images.unsplash.com/photo-1526488730924-f7614e59f42d?q=80&w=1471&auto=format&fit=crop",
+    "caption": "Aquatic life study: Channa punctatus",
+    "category": "Zoology"
+  }
+]
