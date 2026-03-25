@@ -22,8 +22,11 @@ const crimsonPro = Crimson_Pro({
 });
 
 export const metadata = {
-  title: 'BIOSPECTRA | International Journal of Life Sciences',
-  description: 'An International Biannual Refereed Journal of Life Sciences',
+  title: 'BIOSPECTRA | MSET International Journal of Life Sciences',
+  description: 'BIOSPECTRA is an International Biannual Refereed Journal of Life Sciences published by Madhawi Shyam Educational Trust (MSET). Reg. No. 20560/IV-1815/2005.',
+  icons: {
+    icon: '/icon.jpg',
+  },
 };
 
 export default function RootLayout({ children }) {

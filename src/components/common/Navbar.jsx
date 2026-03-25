@@ -28,6 +28,7 @@ const Navbar = () => {
     { name: 'Editorial Board', path: '/editorial' },
     { name: 'Guidelines', path: '/guidelines' },
     { name: 'Gallery', path: '/gallery' },
+    { name: 'Submit', path: '/submit' },
   ];
 
   return (
@@ -37,11 +38,11 @@ const Navbar = () => {
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className={`mx-auto flex items-center justify-between transition-all duration-500 ease-in-out bg-white/95 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] px-6 md:px-10 py-3.5 max-w-7xl w-full rounded-full border border-slate-200/50 ${
+          className={`mx-auto flex items-center justify-between transition-all duration-500 ease-in-out bg-white/95 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] px-6 md:pl-10 md:pr-8 py-3.5 max-w-[1600px] w-full rounded-full border border-slate-200/50 ${
             scrolled ? 'scale-[0.98] py-2.5 opacity-98' : 'scale-100 py-3.5 opacity-100'
           }`}
         >
-          <Link href="/" className="flex items-center space-x-3 group outline-none ring-0">
+          <Link href="/" className="flex items-center space-x-3 group outline-none ring-0 shrink-0 pr-4">
             <motion.div 
               whileHover={{ scale: 1.1 }}
               className="relative flex items-center justify-center p-0"
@@ -55,14 +56,20 @@ const Navbar = () => {
                 priority
               />
             </motion.div>
-            <div className="flex flex-col">
-              <span className="font-extrabold text-2xl leading-none tracking-tighter text-slate-900 group-hover:text-emerald-700 transition-colors font-serif">BIOSPECTRA</span>
-              <span className="text-[10px] font-bold text-emerald-600 tracking-[0.2em] uppercase opacity-80">ISSN: 0973-7057</span>
+            <div className="flex flex-col max-w-[180px] md:max-w-[240px] lg:max-w-none">
+              <span className="font-extrabold text-sm md:text-base lg:text-lg leading-tight tracking-tight text-slate-900 group-hover:text-emerald-700 transition-colors font-serif uppercase text-nowrap">
+                Madhawi Shyam Educational Trust
+              </span>
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
+                <span className="text-[9px] md:text-[10px] font-black text-slate-500 tracking-wider uppercase">BIOSPECTRA</span>
+                <span className="hidden md:inline text-slate-300">|</span>
+                <span className="text-[9px] md:text-[10px] font-bold text-emerald-600 tracking-widest uppercase opacity-90">Reg. No. 20560/IV-1815/2005</span>
+              </div>
             </div>
           </Link>
 
-          {/* Desktop Nav - Centered & Compact */}
-          <div className="hidden lg:flex items-center absolute left-1/2 -translate-x-1/2">
+          {/* Desktop Nav - Clean Spaced Links */}
+          <div className="hidden lg:flex items-center flex-1 justify-end pl-24 pr-4">
             <div className={`flex items-center transition-all duration-300 rounded-full p-1 shadow-sm ${scrolled ? 'bg-white/40 ring-1 ring-white/20' : 'bg-slate-100/30'}`}>
               {navLinks.map((link) => {
                 const isActive = pathname === link.path;
@@ -70,7 +77,7 @@ const Navbar = () => {
                   <Link
                     key={link.name}
                     href={link.path}
-                    className="relative px-4 xl:px-5 py-2 text-[12px] xl:text-[13px] whitespace-nowrap font-semibold transition-all duration-300 outline-none ring-0 focus:outline-none"
+                    className="relative px-3 xl:px-4 py-2 text-[12px] xl:text-[13px] whitespace-nowrap font-semibold transition-all duration-300 outline-none ring-0 focus:outline-none"
                   >
                     {isActive && (
                       <motion.div 
@@ -86,18 +93,6 @@ const Navbar = () => {
                 );
               })}
             </div>
-          </div>
-
-          <div className="hidden lg:block">
-            <Link href="/submit">
-              <Button 
-                variant="primary" 
-                size="md" 
-                className="rounded-full px-7 py-2.5 bg-emerald-700 hover:bg-emerald-800 shadow-lg shadow-emerald-900/10 active:scale-95 transition-all font-bold text-sm tracking-wide"
-              >
-                Submit Article
-              </Button>
-            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -136,11 +131,6 @@ const Navbar = () => {
                   {link.name}
                 </Link>
               ))}
-              <div className="pt-4 mt-4 border-t border-slate-100">
-                <Link href="/submit" onClick={() => setIsOpen(false)}>
-                  <Button className="w-full py-4 rounded-2xl text-lg font-bold">Submit Article</Button>
-                </Link>
-              </div>
             </div>
           </motion.div>
         )}
