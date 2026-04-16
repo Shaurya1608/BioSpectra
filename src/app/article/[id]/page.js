@@ -2,8 +2,7 @@
 import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Download, Share2, Printer, Calendar, FileText, User, ArrowLeft } from 'lucide-react';
-import Button from '@/components/ui/Button';
+import { Download, Share2, Printer, Calendar, BookOpen, User, ArrowLeft } from 'lucide-react';
 import articlesData from '@/data/articles.json';
 
 const Article = ({ params }) => {
@@ -18,125 +17,153 @@ const Article = ({ params }) => {
     return articlesData.find(a => a.id === parseInt(id));
   }, [id]);
 
-  if (!article) return <div className="pt-40 text-center">Article not found.</div>;
+  if (!article) return <div style={{ paddingTop: 160, textAlign: 'center', background: '#f7f5ef', minHeight: '100vh', fontFamily: 'var(--font-inter), sans-serif' }}>Article not found.</div>;
 
   return (
-    <div className="pb-20 bg-white">
-      {/* Article Header */}
-      <section className="bg-slate-50 pt-32 pb-16 border-b">
-        <div className="container mx-auto px-4 md:px-6">
-          <Link href="/archive" className="inline-flex items-center text-emerald-700 font-semibold mb-8 hover:underline">
-            <ArrowLeft size={18} className="mr-2" /> Back to Archive
+    <div style={{ background: '#f7f5ef', minHeight: '100vh', fontFamily: 'var(--font-inter), sans-serif', color: '#4a5568' }}>
+      
+      {/* ── HEADER SECTION ── */}
+      <section style={{ paddingTop: 'clamp(120px, 15vw, 160px)', paddingBottom: 'clamp(60px, 8vw, 80px)', borderBottom: '1px solid rgba(26,46,26,0.06)' }}>
+        <div style={{ maxWidth: 1000, margin: '0 auto', padding: '0 clamp(20px, 4vw, 40px)' }}>
+          
+          <Link href="/archive" style={{ display: 'inline-flex', alignItems: 'center', fontWeight: 600, color: '#1a7a3a', marginBottom: 32, fontSize: 13, letterSpacing: '0.02em', textDecoration: 'none' }} className="hover:underline">
+            <ArrowLeft size={16} style={{ marginRight: 8 }} /> Back to Archive
           </Link>
 
-          <div className="max-w-4xl">
-            <span className="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-4 inline-block">
-              {article.category}
-            </span>
-            <h1 className="text-4xl md:text-6xl font-bold text-slate-900 mb-6 leading-tight font-serif">
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+              <div style={{ width: 8, height: 8, background: '#1a2e1a', borderRadius: '50%' }} />
+              <span style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', fontWeight: 800, color: '#1a2e1a' }}>
+                {article.category}
+              </span>
+            </div>
+
+            <h1 style={{ fontFamily: 'var(--font-crimson-pro), serif', fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 900, color: '#0d1a0d', lineHeight: 1.15, letterSpacing: '0.01em', margin: '0 0 24px 0' }}>
               {article.title}
             </h1>
             
-            <div className="flex flex-wrap items-center gap-6 text-slate-600 mb-8">
-              <div className="flex items-center">
-                <Calendar size={18} className="mr-2 text-emerald-600" />
-                {mounted ? new Date(article.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : 'Loading...'}
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 20, marginBottom: 32, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#6b7280' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Calendar size={13} style={{ marginRight: 6, color: '#1a2e1a' }} />
+                {mounted ? new Date(article.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Loading...'}
               </div>
-              <div className="flex items-center">
-                <FileText size={18} className="mr-2 text-emerald-600" />
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <BookOpen size={13} style={{ marginRight: 6, color: '#1a2e1a' }} />
                 Vol {article.volume}, Issue {article.issue}
               </div>
-              {article.doi && (
-                <div className="text-sm font-mono bg-white px-3 py-1 rounded-md border border-slate-200">
+              {article.doi && article.doi !== "#" && (
+                <div style={{ padding: '4px 10px', background: 'rgba(26,46,26,0.05)', border: '1px solid rgba(26,46,26,0.1)', color: '#1a2e1a' }}>
                   DOI: {article.doi}
                 </div>
               )}
             </div>
 
-            <div className="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm">
-              <h3 className="font-bold text-slate-900 mb-4 flex items-center">
-                <User size={20} className="mr-2 text-emerald-600" /> Authors
-              </h3>
-              <p className="text-lg text-slate-700 leading-relaxed italic">
-                {article.authors.join(', ')}
-              </p>
+            <div style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              padding: '16px 24px', 
+              background: '#fff', 
+              border: '1px solid rgba(26,46,26,0.08)',
+              borderLeft: '4px solid #1a2e1a',
+              minWidth: 280
+            }}>
+              <div style={{ padding: 8, background: 'rgba(26,46,26,0.05)', border: '1px solid rgba(26,46,26,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 16 }}>
+                <User size={16} color="#1a2e1a" />
+              </div>
+              <div>
+                <span style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.2em', fontWeight: 800, color: '#6b7280', display: 'block', marginBottom: 2 }}>Authors</span>
+                <span style={{ fontSize: 16, fontFamily: 'var(--font-crimson-pro), serif', fontWeight: 700, color: '#1a2e1a' }}>
+                  {article.authors.join(', ')}
+                </span>
+              </div>
             </div>
           </div>
+
         </div>
       </section>
 
-      {/* Article Content */}
-      <section className="py-16">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col lg:flex-row gap-16">
-            <div className="lg:w-2/3">
-              <div className="prose prose-slate max-w-none">
-                <div className="mb-12">
-                  <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center font-serif">
-                    Abstract
-                    <div className="h-1 flex-grow bg-slate-100 ml-6 rounded-full"></div>
-                  </h2>
-                  <p className="text-lg text-slate-600 leading-relaxed italic border-l-4 border-emerald-600 pl-6 py-2">
+      {/* ── CONTENT SECTION ── */}
+      <section style={{ padding: 'clamp(50px, 8vw, 80px) 0' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 clamp(20px, 4vw, 40px)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', lg: { gridTemplateColumns: 'minmax(0, 1fr) 300px' }, gap: 'clamp(40px, 6vw, 64px)' }} className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12 lg:gap-16">
+            
+            {/* Main Content Body */}
+            <div>
+              <div style={{ marginBottom: 48 }}>
+                <h2 style={{ fontFamily: 'var(--font-crimson-pro), serif', fontSize: 28, fontWeight: 800, color: '#0d1a0d', marginBottom: 20, display: 'flex', alignItems: 'center' }}>
+                  Abstract
+                  <div style={{ height: 1, flexGrow: 1, background: 'rgba(26,46,26,0.1)', marginLeft: 20 }} />
+                </h2>
+                <div style={{ borderLeft: '2px solid #1a2e1a', paddingLeft: 24 }}>
+                  <p style={{ fontSize: 16, color: '#1a2e1a', lineHeight: 1.8, fontStyle: 'italic', margin: 0 }}>
                     {article.abstract}
                   </p>
                 </div>
+              </div>
 
-                <div>
-                  <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center font-serif">
-                    Discussion & Findings
-                    <div className="h-1 flex-grow bg-slate-100 ml-6 rounded-full"></div>
-                  </h2>
-                  <div className="space-y-6 text-slate-700 leading-relaxed text-lg">
-                    {article.content ? article.content.split('\n').map((para, i) => (
-                      <p key={i}>{para}</p>
-                    )) : (
-                      <p className="italic text-slate-500">
-                        Full text representation not available in the digital reader. Please refer to the PDF version or contact the editorial board for the full article.
-                      </p>
-                    )}
-                    <p>
-                      The standard format of article preparation for full-length papers involves MS Word typing on A-4 size paper. The materials are meticulously reviewed by the editorial board members to ensure the highest academic standards.
-                    </p>
-                    <p>
-                      References were numbered according to the sequence of the text, arranged serially without alphabetical consideration as per the BIOSPECTRA guidelines. Reciprocal placing was strictly followed for all citations within the article.
-                    </p>
-                  </div>
+              <div>
+                <h2 style={{ fontFamily: 'var(--font-crimson-pro), serif', fontSize: 24, fontWeight: 800, color: '#0d1a0d', marginBottom: 20, display: 'flex', alignItems: 'center' }}>
+                  Full Text
+                  <div style={{ height: 1, flexGrow: 1, background: 'rgba(26,46,26,0.1)', marginLeft: 20 }} />
+                </h2>
+                <div style={{ fontSize: 14.5, color: '#4a5568', lineHeight: 1.8, display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  {article.content ? article.content.split('\n').map((para, i) => (
+                    <p key={i} style={{ margin: 0 }}>{para}</p>
+                  )) : (
+                    <div style={{ background: '#fff', border: '1px solid rgba(26,46,26,0.08)', padding: 24, textAlign: 'center', fontStyle: 'italic', color: '#6b7280' }}>
+                      Full text representation not available in the digital reader. Please refer to the PDF version or contact the editorial board for the full article.
+                    </div>
+                  )}
+                  <p style={{ margin: 0 }}>
+                    The standard format of article preparation for full-length papers involves MS Word typing on A-4 size paper. The materials are meticulously reviewed by the editorial board members to ensure the highest academic standards.
+                  </p>
+                  <p style={{ margin: 0 }}>
+                    References were numbered according to the sequence of the text, arranged serially without alphabetical consideration as per the BIOSPECTRA guidelines. Reciprocal placing was strictly followed for all citations within the article.
+                  </p>
                 </div>
               </div>
             </div>
 
             {/* Sidebar Tools */}
-            <div className="lg:w-1/3">
-              <div className="sticky top-28 space-y-8">
-                <div className="bg-slate-900 text-white p-8 rounded-3xl shadow-xl overflow-hidden relative">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-600 rounded-full blur-3xl opacity-20 -mr-16 -mt-16"></div>
-                  <h3 className="text-xl font-bold mb-6 flex items-center">
+            <div>
+              <div style={{ position: 'sticky', top: 120, display: 'flex', flexDirection: 'column', gap: 32 }}>
+                
+                {/* Actions */}
+                <div style={{ background: '#fff', border: '1px solid rgba(26,46,26,0.08)', padding: 32, position: 'relative' }}>
+                  <div style={{ position: 'absolute', top: -1, left: -1, right: -1, height: 3, background: '#1a2e1a' }} />
+                  <h3 style={{ fontFamily: 'var(--font-crimson-pro), serif', fontSize: 20, fontWeight: 800, color: '#0d1a0d', marginBottom: 20 }}>
                     Article Tools
                   </h3>
-                  <div className="space-y-4">
-                    <Button className="w-full justify-between bg-emerald-700 hover:bg-emerald-600 transition-colors">
-                      Download PDF <Download size={20} />
-                    </Button>
-                    <div className="grid grid-cols-2 gap-4">
-                      <Button variant="ghost" className="text-white hover:bg-white/10 border border-white/20">
-                        Print <Printer size={18} className="ml-2" />
-                      </Button>
-                      <Button variant="ghost" className="text-white hover:bg-white/10 border border-white/20">
-                        Share <Share2 size={18} className="ml-2" />
-                      </Button>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <button style={{ width: '100%', background: '#1a2e1a', color: '#fff', border: 'none', padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 10, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#2d5a2d'} onMouseLeave={e => e.currentTarget.style.background = '#1a2e1a'}>
+                      Download PDF <Download size={16} />
+                    </button>
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                      <button style={{ background: 'transparent', border: '1px solid rgba(26,46,26,0.1)', color: '#1a2e1a', padding: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontSize: 9.5, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.background = '#1a2e1a'; e.currentTarget.style.color = '#fff'; }} onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#1a2e1a'; }}>
+                        Print <Printer size={14} />
+                      </button>
+                      <button style={{ background: 'transparent', border: '1px solid rgba(26,46,26,0.1)', color: '#1a2e1a', padding: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontSize: 9.5, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.background = '#1a2e1a'; e.currentTarget.style.color = '#fff'; }} onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#1a2e1a'; }}>
+                        Share <Share2 size={14} />
+                      </button>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-emerald-50 border border-emerald-100 p-8 rounded-3xl">
-                  <h3 className="text-lg font-bold text-emerald-900 mb-4">How to Cite</h3>
-                  <div className="p-4 bg-white border border-emerald-200 rounded-xl text-sm italic text-slate-700 mb-4">
+                {/* Citation */}
+                <div style={{ background: 'rgba(255,255,255,0.5)', border: '1px solid rgba(26,46,26,0.08)', padding: 24 }}>
+                  <h3 style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#1a2e1a', marginBottom: 12 }}>How to Cite</h3>
+                  <div style={{ background: '#fff', border: '1px solid rgba(26,46,26,0.06)', padding: 16, fontSize: 11.5, color: '#4a5568', lineHeight: 1.6, fontStyle: 'italic', marginBottom: 16 }}>
                     {article.authors[0]} et al. ({mounted ? new Date(article.date).getFullYear() : '....'}). "{article.title}". Biospectra (ISSN: 0973-7057), Vol {article.volume}({article.issue}).
                   </div>
-                  <Button variant="link" className="text-xs">Copy Citation</Button>
+                  <button style={{ background: 'none', border: 'none', color: '#1a7a3a', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: 0, cursor: 'pointer', textDecoration: 'underline' }}>
+                    Copy Citation
+                  </button>
                 </div>
+
               </div>
             </div>
+
           </div>
         </div>
       </section>

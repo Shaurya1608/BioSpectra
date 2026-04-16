@@ -22,10 +22,40 @@ const crimsonPro = Crimson_Pro({
 });
 
 export const metadata = {
-  title: 'BIOSPECTRA | MSET International Journal of Life Sciences',
+  metadataBase: new URL('https://mset-biospectra.org'),
+  title: {
+    default: 'BIOSPECTRA | MSET International Journal of Life Sciences',
+    template: '%s | BIOSPECTRA',
+  },
   description: 'BIOSPECTRA is an International Biannual Refereed Journal of Life Sciences published by Madhawi Shyam Educational Trust (MSET). Reg. No. 20560/IV-1815/2005.',
+  keywords: ['Biospectra', 'Life Sciences', 'Research Journal', 'MSET', 'Zoology', 'Botany', 'Biotechnology', 'Peer Reviewed'],
+  authors: [{ name: 'Madhawi Shyam Educational Trust' }],
+  creator: 'MSET',
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://mset-biospectra.org',
+    siteName: 'BIOSPECTRA Journal',
+    title: 'BIOSPECTRA | MSET International Journal of Life Sciences',
+    description: 'An International Biannual Refereed Journal of Life Sciences published by Madhawi Shyam Educational Trust.',
+    images: [
+      {
+        url: '/assets/biospectra.jpg',
+        width: 800,
+        height: 1000,
+        alt: 'Biospectra Journal Cover',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'BIOSPECTRA | Academic Journal of Life Sciences',
+    description: 'An International Biannual Refereed Journal of Life Sciences.',
+    images: ['/assets/biospectra.jpg'],
+  },
   icons: {
     icon: '/icon.jpg',
+    apple: '/icon.jpg',
   },
 };
 

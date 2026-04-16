@@ -22,46 +22,70 @@ const ArticleCard = ({ article }) => {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="bg-white rounded-[2rem] shadow-lg shadow-slate-200/40 border border-slate-100/50 overflow-hidden hover:shadow-2xl hover:shadow-emerald-900/10 transition-all duration-500 group flex flex-col h-full w-full p-7 cursor-pointer outline-none relative"
+      style={{
+        background: '#f7f5ef',
+        border: '1px solid rgba(26,46,26,0.08)',
+        padding: '36px 30px',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        width: '100%',
+        cursor: 'pointer',
+        position: 'relative'
+      }}
+      className="group hover:bg-white transition-colors duration-500"
     >
-      {/* Decorative accent */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-600 to-emerald-400 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+      {/* Top Accent Line */}
+      <div style={{ position: 'absolute', top: -1, left: -1, right: -1, height: 3, background: '#1a2e1a', transformOrigin: 'left', transform: 'scaleX(0)', transition: 'transform 0.5s ease' }} className="group-hover:scale-x-100" />
 
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center space-x-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-          <span className="text-[9px] font-black text-emerald-600 uppercase tracking-[0.2em]">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ width: 6, height: 6, background: '#1a2e1a', borderRadius: '50%' }} className="group-hover:bg-[#1a7a3a] transition-colors" />
+          <span style={{ fontSize: 9, fontWeight: 800, color: '#1a2e1a', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
             {article.category}
           </span>
         </div>
-        <div className="flex items-center text-[9px] text-slate-400 font-bold uppercase tracking-widest">
-          <Calendar size={10} className="mr-1 text-emerald-500/50" />
+        <div style={{ display: 'flex', alignItems: 'center', fontSize: 9.5, color: '#6b7280', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em' }}>
+          <Calendar size={11} style={{ marginRight: 6, color: '#1a2e1a', opacity: 0.5 }} />
           {mounted ? new Date(article.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }) : '...'}
         </div>
       </div>
 
-      <h3 className="text-lg md:text-xl font-black text-slate-900 mb-3 line-clamp-2 leading-[1.3] group-hover:text-emerald-700 transition-colors font-serif tracking-tight">
+      <h3 
+        style={{ 
+          fontFamily: 'var(--font-crimson-pro), serif', 
+          fontSize: 22, 
+          fontWeight: 800, 
+          color: '#0d1a0d', 
+          lineHeight: 1.25, 
+          letterSpacing: '0.01em',
+          marginBottom: 16
+        }}
+        className="line-clamp-2 group-hover:text-[#1a7a3a] transition-colors duration-300"
+      >
         {article.title}
       </h3>
 
-      <div className="flex items-center mb-4 text-slate-500">
-        <div className="w-5 h-5 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center mr-2">
-          <User size={10} className="text-emerald-600" />
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20, color: '#4a5568' }}>
+        <div style={{ padding: 4, border: '1px solid rgba(26,46,26,0.1)', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
+          <User size={12} color="#1a2e1a" />
         </div>
-        <span className="text-[10px] font-bold truncate tracking-tight">{article.authors.join(', ')}</span>
+        <span style={{ fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {article.authors.join(', ')}
+        </span>
       </div>
 
-      <p className="text-[12px] text-slate-600 mb-6 line-clamp-3 leading-relaxed font-medium">
+      <p style={{ fontSize: 13, color: '#4a5568', lineHeight: 1.7, marginBottom: 32, flex: 1 }} className="line-clamp-3">
         {article.abstract}
       </p>
 
-      <div className="mt-auto pt-4 border-t border-slate-50 flex items-center justify-between">
-        <div className="flex items-center text-[9px] font-black uppercase tracking-widest text-slate-400">
+      <div style={{ paddingTop: 20, borderTop: '1px solid rgba(26,46,26,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }} className="group-hover:border-[#1a2e1a]/20 transition-colors duration-300">
+        <div style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.18em', color: '#6b7280' }}>
           Vol. {article.volume} • No. {article.issue}
         </div>
-        <div className="flex items-center text-[10px] font-black uppercase tracking-[0.1em] text-emerald-600 group-hover:text-emerald-700 transition-colors">
+        <div style={{ display: 'flex', alignItems: 'center', fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#1a2e1a' }} className="group-hover:text-[#1a7a3a] transition-colors">
           Read Full
-          <ArrowRight size={14} className="ml-1.5 group-hover:translate-x-1 transition-transform duration-300" />
+          <ArrowRight size={14} style={{ marginLeft: 8, transition: 'transform 0.3s ease' }} className="group-hover:translate-x-1" />
         </div>
       </div>
     </motion.div>

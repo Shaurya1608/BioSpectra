@@ -1,7 +1,11 @@
 'use client';
-import React, { useRef, useState, useCallback } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { ArrowRight, BookOpen, Users, Award, ShieldCheck, Layers, Globe, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { motion } from 'framer-motion';
+import {
+  ArrowRight, BookOpen, ShieldCheck,
+  Layers, Globe, ChevronLeft, ChevronRight,
+} from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import SectionTitle from '@/components/ui/SectionTitle';
@@ -9,380 +13,666 @@ import Button from '@/components/ui/Button';
 import ArticleCard from '@/components/common/ArticleCard';
 import articlesData from '@/data/articles.json';
 
-// Assets from public directory
-const biospectraCover = '/assets/biospectra.jpg';
-const biospectraBg = '/assets/biospecbg.jpg';
-const awardImg = '/assets/award2.jpg';
-const certificateImg = '/assets/cerificate of indexing.jpg';
-const msetLogo = '/assets/mset-logo-png-removebg-preview.png';
-const iccbLogo = '/assets/iccb-logo-removebg-preview.png';
+// Dynamic import to prevent SSR for the WebGL canvas
+const TreeModel3D = dynamic(() => import('@/components/common/TreeModel3D'), { ssr: false });
 
+// Assets
+const biospectraCover  = '/assets/biospectra.jpg';
+const awardImg         = '/assets/award2.jpg';
+const certificateImg   = '/assets/cerificate of indexing.jpg';
+const msetLogo         = '/assets/mset-logo-png-removebg-preview.png';
+const iccbLogo         = '/assets/iccb-logo-removebg-preview.png';
+
+/* ─────────────────────────────────────────────────────────────────
+   MAIN PAGE
+───────────────────────────────────────────────────────────────── */
 const Home = () => {
-   const marqueeRef = useRef(null);
-   const isInView = useInView(marqueeRef, { once: false, amount: 0.1 });
-   const scrollContainerRef = useRef(null);
+  const scrollContainerRef = useRef(null);
+  const [activeArea, setActiveArea] = useState(1);
 
-   const scroll = (direction) => {
-     if (scrollContainerRef.current) {
-       const scrollAmount = window.innerWidth < 768 ? 320 : 380;
-       scrollContainerRef.current.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
-     }
-   };
+  const scroll = (direction) => {
+    if (scrollContainerRef.current) {
+      const amount = window.innerWidth < 768 ? 320 : 380;
+      scrollContainerRef.current.scrollBy({
+        left: direction === 'left' ? -amount : amount,
+        behavior: 'smooth',
+      });
+    }
+  };
 
   return (
     <div className="flex flex-col w-full">
-      {/* Scenic Hero Section */}
-      <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-slate-50">
-        <div className="absolute inset-0 z-0 flex items-center justify-center">
-          <Image 
-            src="/assets/dnabg.png" 
-            alt="Molecular Research Backdrop" 
-            fill
-            priority
-            quality={100}
-            className="object-cover"
-          />
-          {/* Subtle gradient just to fade the bottom into the page content */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-white/60 pointer-events-none"></div>
+
+      {/* ══════════════════════════════════════════════════════════
+          HERO — Bonsai-inspired editorial split layout
+      ══════════════════════════════════════════════════════════ */}
+      <section
+        className="relative min-h-screen w-full overflow-hidden"
+        style={{ background: '#f7f5ef', fontFamily: 'var(--font-inter), sans-serif' }}
+      >
+        {/* Top accent bar */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] z-20" style={{ background: '#1a2e1a' }} />
+
+        {/* Large ghost number */}
+        <div
+          className="absolute select-none pointer-events-none"
+          style={{
+            right: '6%',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            fontSize: 'clamp(140px, 22vw, 300px)',
+            fontWeight: 900,
+            color: 'rgba(26,46,26,0.05)',
+            lineHeight: 1,
+            letterSpacing: '-0.05em',
+          }}
+        >
+          01
         </div>
 
-        <div className="container mx-auto px-4 md:px-6 relative z-10 text-center flex flex-col items-center">
-          <motion.div 
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: {
-                opacity: 1,
-                transition: {
-                  staggerChildren: 0.2,
-                  delayChildren: 0.3
-                }
-              }
-            }}
-            className="max-w-3xl"
+        {/* ── TWO-COLUMN GRID ── */}
+        <div
+          className="relative z-10 min-h-screen grid grid-cols-1 lg:grid-cols-[1fr_1.15fr]"
+        >
+          {/* ────────────── LEFT COLUMN ────────────── */}
+          <div
+            className="flex flex-col justify-center relative"
+            style={{ padding: 'clamp(100px,10vw,140px) clamp(30px,4vw,70px) 60px clamp(60px,8vw,110px)' }}
           >
-            <motion.div 
-              variants={{
-                hidden: { opacity: 0, scale: 0.9, y: 20 },
-                visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
-              }}
-              className="flex flex-col items-center mb-6"
-            >
-              <div className="mb-2">
-                <Image src={msetLogo} alt="MSET Logo" width={120} height={120} className="w-28 h-28 object-contain drop-shadow-2xl" />
-              </div>
-              
-              <div className="flex items-center space-x-3 mb-3 bg-white/30 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/50 shadow-sm">
-                <div className="h-px w-3 bg-emerald-600"></div>
-                <span className="text-emerald-900 font-extrabold tracking-[0.2em] uppercase text-[8px]">
-                  Madhawi Shyam Educational Trust
-                </span>
-                <div className="h-px w-3 bg-emerald-600"></div>
-              </div>
 
-              {/* Journal Publication Strip */}
-              <div className="flex items-center space-x-2 mb-3 bg-emerald-900/10 backdrop-blur-md px-4 py-1.5 rounded-full border border-emerald-900/15 shadow-sm">
-                <span className="text-emerald-950 font-bold text-[9px] tracking-widest uppercase opacity-80">
-                  Vol. 17 &nbsp;|&nbsp; Issue 2 &nbsp;|&nbsp; Published Since 2006
-                </span>
-              </div>
-            </motion.div>
-            
-            <motion.h1 
-              variants={{
-                hidden: { opacity: 0, filter: "blur(10px)", y: 20 },
-                visible: { opacity: 1, filter: "blur(0px)", y: 0, transition: { duration: 1, ease: "easeOut" } }
+            {/* Vertical watermark */}
+            <div
+              className="absolute hidden lg:block select-none pointer-events-none"
+              style={{
+                left: 12,
+                top: '50%',
+                transform: 'translateY(-50%) rotate(180deg)',
+                writingMode: 'vertical-rl',
+                fontSize: 'clamp(56px,8vw,110px)',
+                fontWeight: 900,
+                color: 'rgba(26,46,26,0.07)',
+                letterSpacing: '0.14em',
+                textTransform: 'lowercase',
+                lineHeight: 1,
               }}
-              className="text-5xl sm:text-6xl md:text-7xl font-black bg-clip-text text-transparent bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-500 mb-6 leading-none tracking-[0.05em] uppercase drop-shadow-sm"
             >
-              BIOSPECTRA
-            </motion.h1>
+              journal
+            </div>
 
+            {/* Tag line */}
             <motion.div
-              variants={{
-                hidden: { opacity: 0, scale: 0.9 },
-                visible: { opacity: 1, scale: 1, transition: { duration: 0.6 } }
-              }}
-              className="flex flex-wrap justify-center items-center gap-3 mb-6"
+              initial={{ opacity: 0, x: -18 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.55, delay: 0.1 }}
+              style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28, marginLeft: 28 }}
             >
-              <div className="bg-white/60 backdrop-blur-md border border-emerald-200/60 shadow-sm rounded-full px-4 py-1.5 flex items-center space-x-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                <span className="text-emerald-800 font-black tracking-[0.2em] text-[10px]">
-                  ISSN: <span className="font-medium">0973-7057</span>
-                </span>
-              </div>
-              
-              <div className="bg-white/60 backdrop-blur-md border border-emerald-200/60 shadow-sm rounded-full px-4 py-1.5 flex items-center space-x-2">
-                <Award size={10} className="text-emerald-500" />
-                <span className="text-emerald-800 font-black tracking-[0.2em] text-[10px]">
-                  IMPACT FACTOR: <span className="font-black text-emerald-950">8.546</span>
+              <div style={{ height: 1, width: 36, background: '#1a2e1a' }} />
+              <span style={{ fontSize: 10, letterSpacing: '0.24em', textTransform: 'uppercase', fontWeight: 700, color: '#1a2e1a', opacity: 0.65 }}>
+                International Journal of Life Sciences
+              </span>
+            </motion.div>
+
+            {/* Main headline block */}
+            <motion.div
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.68, delay: 0.22 }}
+              style={{ marginLeft: 28 }}
+            >
+              {/* Line 1 */}
+              <h1
+                style={{
+                  fontFamily: 'var(--font-crimson-pro), serif',
+                  fontSize: 'clamp(46px, 6.5vw, 86px)',
+                  fontWeight: 900,
+                  color: '#0d1a0d',
+                  lineHeight: 1,
+                  letterSpacing: '-0.02em',
+                  margin: 0,
+                }}
+              >
+                BIOSPECTRA
+              </h1>
+
+              {/* Rule + sub-headline */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 8, marginBottom: 0 }}>
+                <div style={{ height: 2, width: 52, background: '#1a2e1a', flexShrink: 0 }} />
+                <span
+                  style={{
+                    fontFamily: 'var(--font-crimson-pro), serif',
+                    fontSize: 'clamp(16px, 2.1vw, 28px)',
+                    fontWeight: 600,
+                    color: '#0d1a0d',
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  SCIENTIFIC RESEARCH
                 </span>
               </div>
             </motion.div>
-            
-            <motion.p 
-              variants={{
-                hidden: { opacity: 0, y: 15 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.8 } }
+
+            {/* Description */}
+            <motion.p
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.68, delay: 0.38 }}
+              style={{
+                fontSize: 12.5,
+                color: '#4a5568',
+                lineHeight: 1.8,
+                maxWidth: 310,
+                marginTop: 20,
+                marginBottom: 28,
+                marginLeft: 28,
               }}
-              className="text-sm md:text-base text-emerald-800 mb-6 leading-relaxed font-semibold max-w-xl mx-auto"
             >
-              Your international refereed journal for the latest scientific breakthroughs in Life Sciences. Published biannually since 2006.
+             An International Biannual Refereed Journal of Life Sciences (ISSN: 0973-7057). Published since 2006.
             </motion.p>
 
-
-
-            <motion.div 
-              variants={{
-                hidden: { opacity: 0, scale: 0.95 },
-                visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } }
-              }}
-              className="flex flex-wrap justify-center gap-3.5 mb-10"
+            {/* CTA buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.68, delay: 0.52 }}
+              style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginLeft: 28 }}
             >
               <Link href="/archive">
-                <Button size="lg" className="bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 text-white shadow-xl shadow-emerald-900/20 px-8 py-4 rounded-2xl font-black text-sm group transition-all transform hover:-translate-y-1 hover:scale-[1.02] active:scale-95">
-                  Read Journal <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
+                <button
+                  id="hero-cta-explore"
+                  style={{
+                    background: '#1a2e1a',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '12px 28px',
+                    fontSize: 10,
+                    fontWeight: 700,
+                    letterSpacing: '0.18em',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    transition: 'all 0.25s ease',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#2d5a2d'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#1a2e1a'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                >
+                  explore <ArrowRight size={13} />
+                </button>
               </Link>
+
               <Link href="/submit">
-                <Button size="lg" variant="outline" className="bg-white/40 backdrop-blur-xl border-emerald-200/50 text-emerald-950 hover:bg-white/60 px-8 py-4 rounded-2xl font-black text-sm shadow-xl shadow-emerald-900/5 transition-all transform hover:-translate-y-1 hover:scale-[1.02] active:scale-95">
+                <button
+                  id="hero-cta-submit"
+                  style={{
+                    background: 'transparent',
+                    color: '#1a2e1a',
+                    border: '1.5px solid #1a2e1a',
+                    padding: '11px 24px',
+                    fontSize: 10,
+                    fontWeight: 600,
+                    letterSpacing: '0.14em',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    transition: 'all 0.25s ease',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#1a2e1a'; e.currentTarget.style.color = '#fff'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#1a2e1a'; }}
+                >
                   Submit Article
-                </Button>
+                </button>
               </Link>
             </motion.div>
-          </motion.div>
+
+            {/* Bottom stat bar */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.7, delay: 0.72 }}
+              style={{ display: 'flex', alignItems: 'flex-end', gap: 28, marginTop: 'clamp(32px,5vh,60px)', marginLeft: 28 }}
+            >
+              <div style={{ borderLeft: '2px solid #c9c9bc', paddingLeft: 14 }}>
+                <div style={{ fontSize: 26, fontWeight: 900, color: '#1a2e1a', lineHeight: 1 }}>8.546</div>
+                <div style={{ fontSize: 8.5, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#6b7280', marginTop: 4 }}>Impact Factor</div>
+              </div>
+
+              <div
+                style={{
+                  background: '#1a4a1a',
+                  padding: '14px 22px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                }}
+              >
+                <div
+                  style={{
+                    writingMode: 'vertical-rl',
+                    transform: 'rotate(180deg)',
+                    fontSize: 8,
+                    fontWeight: 700,
+                    letterSpacing: '0.22em',
+                    textTransform: 'uppercase',
+                    color: 'rgba(255,255,255,0.55)',
+                  }}
+                >
+                  Vol.17
+                </div>
+                <div style={{ color: '#fff', fontWeight: 900, fontSize: 15, letterSpacing: '0.05em' }}>Issue 2</div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* ────────────── RIGHT COLUMN — 3D Tree ────────────── */}
+          <div
+            className="hidden lg:flex relative flex-col items-center justify-center overflow-hidden"
+            style={{ minHeight: '100vh' }}
+          >
+            {/* Sage background */}
+            <div
+              className="absolute inset-0"
+              style={{ background: 'linear-gradient(135deg,#e8ede8 0%,#d8e5d8 55%,#e2eae0 100%)' }}
+            />
+
+            {/* Subtle dot grid */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                backgroundImage: `radial-gradient(circle, rgba(26,46,26,0.1) 1px, transparent 1px)`,
+                backgroundSize: '32px 32px',
+                opacity: 0.35,
+              }}
+            />
+
+            {/* 3D Canvas */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.88 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1.1, delay: 0.25, ease: [0.23, 1, 0.32, 1] }}
+              style={{ width: '100%', height: '72vh', maxHeight: 640, minHeight: 380, position: 'relative', zIndex: 10 }}
+            >
+              <TreeModel3D />
+            </motion.div>
+
+            {/* Oval ground shadow */}
+            <div
+              className="absolute z-20 pointer-events-none"
+              style={{
+                bottom: '18%',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: 280,
+                height: 18,
+                background: 'radial-gradient(ellipse at center, rgba(26,46,26,0.2) 0%, transparent 70%)',
+                borderRadius: '50%',
+              }}
+            />
+
+            {/* Focus area selector */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.9 }}
+              className="absolute bottom-8 z-30"
+              style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+            >
+              <span style={{ fontSize: 9, color: '#4a5568', letterSpacing: '0.14em', marginRight: 8, textTransform: 'uppercase' }}>Focus Area</span>
+              {['Zoology', 'Botany', 'Biotechnology'].map((label, i) => (
+                <button
+                  key={i}
+                  id={`focus-area-${label.toLowerCase()}`}
+                  onClick={() => setActiveArea(i)}
+                  style={{
+                    padding: '7px 16px',
+                    fontSize: 9,
+                    fontWeight: activeArea === i ? 700 : 500,
+                    letterSpacing: '0.13em',
+                    textTransform: 'uppercase',
+                    background: activeArea === i ? '#1a2e1a' : 'rgba(255,255,255,0.72)',
+                    color: activeArea === i ? '#fff' : '#4a5568',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    backdropFilter: 'blur(10px)',
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+            </motion.div>
+
+            {/* Arrow nav */}
+            <div className="absolute left-3 bottom-8 z-30" style={{ display: 'flex', gap: 8 }}>
+              <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#1a2e1a', opacity: 0.45, lineHeight: 1, padding: 0 }}>
+                <ChevronLeft size={17} />
+              </button>
+              <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#1a2e1a', opacity: 0.45, lineHeight: 1, padding: 0 }}>
+                <ChevronRight size={17} />
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Scroll Indicator */}
-        <motion.div 
+        {/* Scroll indicator */}
+        <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 text-slate-400"
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 hidden lg:flex flex-col items-center gap-1.5"
         >
-          <div className="w-1 h-12 rounded-full bg-gradient-to-b from-emerald-500 to-transparent opacity-50"></div>
+          <span style={{ fontSize: 8.5, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#6b7280' }}>scroll</span>
+          <div style={{ width: 1, height: 32, background: 'linear-gradient(to bottom,rgba(26,46,26,0.45),transparent)' }} />
         </motion.div>
       </section>
 
-      {/* Governing Bodies Section */}
-      <section className="py-10 bg-slate-50 border-b border-slate-100">
-        <div className="container mx-auto px-4 md:px-6 text-center">
-          <SectionTitle 
-            title="Our Governing Bodies" 
-            subtitle="Biospectra is officially published under the stewardship of these distinguished academic organizations."
-            centered={true}
-            compact={true}
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mt-8">
+      {/* ══════════════════════════════════════════════════════════
+          GOVERNING BODIES
+      ══════════════════════════════════════════════════════════ */}
+      <section style={{ background: '#f7f5ef', borderTop: '1px solid rgba(26,46,26,0.06)', padding: 'clamp(50px, 8vw, 80px) 0' }}>
+        <div style={{ maxWidth: 1600, margin: '0 auto', padding: '0 clamp(20px, 4vw, 60px)' }}>
+          {/* Header */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 'clamp(36px, 6vw, 50px)' }}>
+            <h2 
+              style={{ 
+                fontFamily: 'var(--font-crimson-pro), serif', 
+                fontSize: 'clamp(26px, 3.5vw, 36px)', 
+                fontWeight: 900, 
+                color: '#0d1a0d', 
+                letterSpacing: '0.02em', 
+                margin: 0, 
+                textAlign: 'center',
+                lineHeight: 1.1
+              }}
+            >
+              OUR GOVERNING BODIES
+            </h2>
+            <div style={{ height: 2, width: 40, background: '#1a2e1a', margin: '20px 0' }} />
+            <p style={{ fontSize: 13, color: '#4a5568', maxWidth: 450, textAlign: 'center', lineHeight: 1.7, letterSpacing: '0.02em' }}>
+              Biospectra is officially published under the stewardship of these distinguished academic organizations.
+            </p>
+          </div>
+
+          {/* Cards Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24, maxWidth: 840, margin: '0 auto' }}>
             {[
-              {
-                name: "Madhawi Shyam Educational Trust",
-                acronym: "MSET",
-                desc: "A dedicated foundation committed to advancing higher education and scientific research across the biological sciences.",
-                logo: msetLogo,
-                color: "emerald"
-              },
-              {
-                name: "International Consortium of Contemporary Biologists",
-                acronym: "ICCB",
-                desc: "An international fellowship of scientists and researchers fostering global collaboration and innovation in modern biology.",
-                logo: iccbLogo,
-                color: "slate"
-              }
+              { name: 'Madhawi Shyam Educational Trust', acronym: 'MSET', desc: 'A dedicated foundation committed to advancing higher education and scientific research across the biological sciences.', logo: msetLogo },
+              { name: 'International Consortium of Contemporary Biologists', acronym: 'ICCB', desc: 'An international fellowship of scientists and researchers fostering global collaboration and innovation in modern biology.', logo: iccbLogo },
             ].map((body, i) => (
-              <motion.div 
+              <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 15 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-                className="group relative bg-white p-6 rounded-[1.5rem] border border-slate-100 shadow-lg shadow-slate-200/40 hover:shadow-xl hover:shadow-emerald-900/5 transition-all duration-500 overflow-hidden"
+                transition={{ duration: 0.6, delay: i * 0.15 }}
+                style={{
+                  background: 'rgba(255,255,255,0.7)',
+                  border: '1px solid rgba(26,46,26,0.08)',
+                  padding: '36px 28px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  textAlign: 'center',
+                  position: 'relative'
+                }}
+                className="group hover:bg-white transition-colors duration-500"
               >
-                <div className={`absolute -right-6 -bottom-6 w-24 h-24 ${body.color === 'emerald' ? 'bg-emerald-50' : 'bg-slate-50'} rounded-full transition-transform duration-500 group-hover:scale-[2]`}></div>
+                {/* Accent top bar */}
+                <div style={{ position: 'absolute', top: -1, left: -1, right: -1, height: 3, background: '#1a2e1a', transformOrigin: 'left', transform: 'scaleX(0)', transition: 'transform 0.5s ease' }} className="group-hover:scale-x-100" />
                 
-                <div className="relative z-10 flex flex-col items-center">
-                  <div className="relative mb-4 group-hover:scale-110 transition-transform flex items-center justify-center">
-                    <Image src={body.logo} alt={body.name} width={120} height={120} className="h-20 w-auto object-contain" />
-                  </div>
-                  <h3 className="text-lg font-black text-slate-900 mb-1 tracking-tight leading-tight">
-                    {body.name}
-                  </h3>
-                  <div className={`inline-block px-3 py-0.5 rounded-full ${body.color === 'emerald' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-700'} text-[9px] font-black uppercase tracking-widest mb-3`}>
-                    {body.acronym}
-                  </div>
-                  <p className="text-slate-500 text-xs leading-relaxed max-w-xs mx-auto">
-                    {body.desc}
-                  </p>
+                <div style={{ height: 70, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
+                  <Image src={body.logo} alt={body.name} width={90} height={90} style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }} className="group-hover:scale-105 transition-transform duration-500" />
                 </div>
+                
+                <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#1a7a3a', marginBottom: 12 }}>
+                  {body.acronym}
+                </div>
+                
+                <h3 
+                  style={{ 
+                    fontFamily: 'var(--font-crimson-pro), serif', 
+                    fontSize: 18, 
+                    fontWeight: 800, 
+                    color: '#0d1a0d', 
+                    lineHeight: 1.25, 
+                    marginBottom: 16,
+                    letterSpacing: '0.01em'
+                  }}
+                >
+                  {body.name}
+                </h3>
+                
+                <div style={{ width: 24, height: 1.5, background: 'rgba(26,46,26,0.15)', marginBottom: 16 }} className="group-hover:w-12 transition-all duration-500" />
+                
+                <p style={{ fontSize: 12, color: '#4a5568', lineHeight: 1.7, margin: 0 }}>
+                  {body.desc}
+                </p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Latest Articles Section - Compacted for better vertical efficiency */}
-      <section className="py-16 bg-white relative overflow-hidden">
-        {/* Decorative Background Elements */}
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-emerald-500/10 to-transparent"></div>
-        <div className="absolute -top-24 -right-24 w-72 h-72 bg-emerald-50 rounded-full mix-blend-multiply opacity-60 blur-3xl animate-blob"></div>
-
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10">
-            <div className="max-w-xl">
-              <div className="flex items-center space-x-2 mb-3">
-                <div className="h-px w-6 bg-emerald-600"></div>
-                <span className="text-emerald-600 font-extrabold uppercase tracking-[0.2em] text-[9px]">
+      {/* ══════════════════════════════════════════════════════════
+          LATEST ARTICLES
+      ══════════════════════════════════════════════════════════ */}
+      <section style={{ background: '#fff', borderTop: '1px solid rgba(26,46,26,0.06)', padding: 'clamp(50px, 8vw, 80px) 0', overflow: 'hidden' }}>
+        <div style={{ maxWidth: 1600, margin: '0 auto', padding: '0 clamp(20px, 4vw, 60px)' }}>
+          {/* Header row */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 'clamp(36px, 6vw, 50px)', gap: 24 }}>
+            <div style={{ maxWidth: 600 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                <div style={{ width: 32, height: 1.5, background: '#1a2e1a' }} />
+                <span style={{ fontSize: 9.5, letterSpacing: '0.24em', textTransform: 'uppercase', fontWeight: 700, color: '#1a7a3a' }}>
                   Recent Publications
                 </span>
               </div>
-              <SectionTitle 
-                title="Latest Research Articles" 
-                subtitle="Explore the most recent peer-reviewed studies published in Biospectra." 
-                compact={true}
-                dark={false}
-              />
+              <h2
+                style={{
+                  fontFamily: 'var(--font-crimson-pro), serif',
+                  fontSize: 'clamp(28px, 4vw, 40px)',
+                  fontWeight: 900,
+                  color: '#0d1a0d',
+                  lineHeight: 1.1,
+                  letterSpacing: '0.01em',
+                  margin: '0 0 12px 0'
+                }}
+              >
+                Latest Research Articles
+              </h2>
+              <p style={{ fontSize: 13, color: '#4a5568', lineHeight: 1.7, margin: 0, letterSpacing: '0.02em' }}>
+                Explore the most recent peer-reviewed studies published in Biospectra.
+              </p>
             </div>
-            <div className="mt-4 md:mt-0">
-              <Link href="/archive">
-                <Button variant="outline" size="md" className="group rounded-xl border-emerald-100 text-emerald-700 font-bold uppercase tracking-widest px-6 py-4 hover:bg-emerald-50 transition-all shadow-lg shadow-emerald-900/5 text-xs">
-                  Full Archive <ArrowRight size={14} className="ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-            </div>
+            
+            <Link href="/archive">
+              <button
+                style={{
+                  background: 'transparent',
+                  color: '#1a2e1a',
+                  border: '1.5px solid #1a2e1a',
+                  padding: '10px 20px',
+                  fontSize: 10,
+                  fontWeight: 700,
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  transition: 'all 0.22s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = '#1a2e1a';
+                  e.currentTarget.style.color = '#fff';
+                  e.currentTarget.querySelector('svg').style.transform = 'translateX(4px)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.color = '#1a2e1a';
+                  e.currentTarget.querySelector('svg').style.transform = 'translateX(0)';
+                }}
+              >
+                Full Archive <ArrowRight size={14} style={{ transition: 'transform 0.22s ease' }} />
+              </button>
+            </Link>
           </div>
 
-          <div className="relative group/carousel mt-6 md:mt-10">
-            {/* Left Scroll Arrow */}
+          {/* Carousel */}
+          <div className="relative group/carousel mt-6 md:mt-8">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 -ml-5 z-20 opacity-0 group-hover/carousel:opacity-100 transition-opacity duration-300 hidden md:block">
-              <button 
-                onClick={() => scroll('left')}
-                className="p-3 rounded-full bg-white/95 backdrop-blur-md border border-slate-100 shadow-xl text-emerald-700 hover:bg-emerald-50 hover:scale-110 transition-all focus:outline-none"
-                aria-label="Scroll left"
-              >
-                <ChevronLeft size={24} />
+              <button onClick={() => scroll('left')} style={{ padding: 12, background: '#fff', border: '1px solid rgba(26,46,26,0.1)', color: '#1a2e1a', cursor: 'pointer', transition: 'all 0.2s ease', display: 'flex' }} className="hover:bg-[#1a2e1a] hover:text-white" aria-label="Scroll left">
+                <ChevronLeft size={20} />
               </button>
             </div>
 
-            {/* Scrollable Container */}
-            <div 
-              ref={scrollContainerRef}
-              className="flex items-stretch gap-6 md:gap-8 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-8 px-4 -mx-4 md:px-2 md:-mx-2"
-            >
+            <div ref={scrollContainerRef} className="flex items-stretch gap-6 md:gap-8 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-8 px-4 -mx-4 md:px-2 md:-mx-2">
               {articlesData.map((article) => (
-                <div key={article.id} className="snap-start shrink-0 w-[300px] md:w-[360px]">
+                <div key={article.id} className="snap-start shrink-0 w-[280px] md:w-[340px]">
                   <ArticleCard article={article} />
                 </div>
               ))}
             </div>
 
-            {/* Right Scroll Arrow */}
             <div className="absolute right-0 top-1/2 -translate-y-1/2 -mr-5 z-20 opacity-0 group-hover/carousel:opacity-100 transition-opacity duration-300 hidden md:block">
-              <button 
-                onClick={() => scroll('right')}
-                className="p-3 rounded-full bg-white/95 backdrop-blur-md border border-slate-100 shadow-xl text-emerald-700 hover:bg-emerald-50 hover:scale-110 transition-all focus:outline-none"
-                aria-label="Scroll right"
-              >
-                <ChevronRight size={24} />
+              <button onClick={() => scroll('right')} style={{ padding: 12, background: '#fff', border: '1px solid rgba(26,46,26,0.1)', color: '#1a2e1a', cursor: 'pointer', transition: 'all 0.2s ease', display: 'flex' }} className="hover:bg-[#1a2e1a] hover:text-white" aria-label="Scroll right">
+                <ChevronRight size={20} />
               </button>
             </div>
           </div>
 
-          <div className="mt-12 flex justify-center">
-             <div className="p-6 bg-slate-50/50 rounded-[2rem] border border-slate-100 flex flex-col md:flex-row items-center gap-6 max-w-3xl w-full">
-                <div className="bg-white p-3 rounded-xl shadow-md border border-emerald-50">
-                   <BookOpen size={24} className="text-emerald-600" />
-                </div>
-                <div className="text-center md:text-left">
-                   <h4 className="text-lg font-black text-slate-900 mb-1 font-serif">Contribute to Science</h4>
-                   <p className="text-[11px] text-slate-500 max-w-sm">We welcome original research papers and review articles. Join our community today.</p>
-                </div>
-                <div className="md:ml-auto">
-                   <Link href="/submit">
-                      <Button className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg px-5 py-2.5 font-black uppercase tracking-widest text-[10px] shadow-md shadow-emerald-900/10">
-                         Submit Paper
-                      </Button>
-                   </Link>
-                </div>
-             </div>
+          {/* Contribute Banner */}
+          <div style={{ marginTop: 40, borderTop: '1px solid rgba(26,46,26,0.06)', paddingTop: 40, display: 'flex', justifyContent: 'center' }}>
+            <div style={{ background: '#f7f5ef', border: '1px solid rgba(26,46,26,0.08)', padding: '32px 40px', display: 'flex', flexDirection: 'column', md: 'row', alignItems: 'center', gap: 24, width: '100%', maxWidth: 840 }} className="md:flex-row">
+              <div style={{ border: '1px solid rgba(26,46,26,0.1)', background: '#fff', padding: 12, display: 'flex' }}>
+                <BookOpen size={20} color="#1a2e1a" />
+              </div>
+              <div style={{ textAlign: 'center' }} className="md:text-left flex-1">
+                <h4 style={{ fontFamily: 'var(--font-crimson-pro), serif', fontSize: 20, fontWeight: 800, color: '#0d1a0d', marginBottom: 4 }}>Contribute to Science</h4>
+                <p style={{ fontSize: 12.5, color: '#4a5568', margin: 0, lineHeight: 1.6 }}>We welcome original research papers and review articles. Join our community today.</p>
+              </div>
+              <div className="pt-4 md:pt-0">
+                <Link href="/submit">
+                  <button
+                    style={{
+                      background: '#1a2e1a',
+                      color: '#fff',
+                      border: 'none',
+                      padding: '12px 24px',
+                      fontSize: 10,
+                      fontWeight: 700,
+                      letterSpacing: '0.16em',
+                      textTransform: 'uppercase',
+                      cursor: 'pointer',
+                      transition: 'all 0.22s ease'
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = '#1a7a3a'}
+                    onMouseLeave={e => e.currentTarget.style.background = '#1a2e1a'}
+                  >
+                    Submit Paper
+                  </button>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Editorial Highlights */}
-      <section className="py-24 bg-white relative overflow-hidden">
-        <div className="container mx-auto px-4 md:px-6">
+      {/* ══════════════════════════════════════════════════════════
+          EDITORIAL HIGHLIGHTS
+      ══════════════════════════════════════════════════════════ */}
+      <section style={{ background: '#f7f5ef', borderTop: '1px solid rgba(26,46,26,0.06)', padding: 'clamp(50px, 8vw, 80px) 0', overflow: 'hidden' }}>
+        <div style={{ maxWidth: 1600, margin: '0 auto', padding: '0 clamp(20px, 4vw, 60px)' }}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
-            {/* Elegant Image Collage */}
-            <div className="relative group perspective-1000">
-              <div className="absolute -inset-4 bg-gradient-to-tr from-emerald-100 to-sky-50 rounded-[3rem] opacity-50 blur-2xl group-hover:opacity-70 transition-opacity duration-700"></div>
-              <div className="absolute -top-10 -left-10 w-48 h-48 bg-emerald-100 rounded-full mix-blend-multiply opacity-60 animate-blob"></div>
-              <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-sky-100 rounded-full mix-blend-multiply opacity-60 animate-blob animation-delay-2000"></div>
-              
-              <div className="relative z-10 w-full max-w-md mx-auto aspect-[4/3] flex items-center justify-center">
-                {/* Back Image - Ceremony */}
-                <motion.div 
-                  initial={{ opacity: 0, x: -30, rotate: -6 }}
-                  whileInView={{ opacity: 1, x: 0, rotate: -6 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  className="absolute left-0 bottom-4 w-2/3 z-10 hover:z-30 transition-all duration-500 ease-out hover:-translate-y-4 hover:rotate-[-2deg] hover:scale-[1.05]"
+            
+            {/* Left side: Images */}
+            <div style={{ position: 'relative', width: '100%', maxWidth: 500, margin: '0 auto', aspectRatio: '4/3' }}>
+              {/* Background architectural square */}
+              <div style={{ position: 'absolute', top: '10%', right: '10%', width: '80%', height: '80%', background: 'rgba(26,46,26,0.03)', border: '1px solid rgba(26,46,26,0.08)' }} />
+              <div style={{ position: 'absolute', bottom: '5%', left: '5%', width: '70%', height: '70%', background: 'rgba(26,46,26,0.02)', border: '1px solid rgba(26,46,26,0.08)' }} />
+
+              <motion.div
+                  initial={{ opacity: 0, x: -20, y: 20 }}
+                  whileInView={{ opacity: 1, x: 0, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7 }}
+                  style={{ position: 'absolute', left: 0, bottom: 0, width: '60%', zIndex: 10 }}
+                  className="hover:z-30 transition-transform duration-500 hover:-translate-y-2"
                 >
-                  <div className="bg-white rounded-[2rem] p-2 shadow-xl shadow-slate-900/10 border border-slate-100/50">
-                    <Image 
-                      src={awardImg} 
-                      alt="Research Excellence Award" 
-                      width={300}
-                      height={400}
-                      className="rounded-[1.5rem] object-cover h-auto w-full"
-                    />
+                  <div style={{ background: '#fff', padding: 8, border: '1px solid rgba(26,46,26,0.1)', boxShadow: '0 10px 30px -10px rgba(0,0,0,0.1)' }}>
+                    <Image src={awardImg} alt="Research Excellence Award" width={400} height={300} style={{ width: '100%', height: 'auto', display: 'block' }} />
                   </div>
                 </motion.div>
 
-                {/* Front Image - Journal Cover */}
-                <motion.div 
-                  initial={{ opacity: 0, x: 30, rotate: 6 }}
-                  whileInView={{ opacity: 1, x: 0, rotate: 6 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  className="absolute right-0 top-0 w-[55%] z-20 hover:z-30 transition-all duration-500 ease-out hover:-translate-y-4 hover:rotate-[2deg] hover:scale-[1.05]"
+                <motion.div
+                  initial={{ opacity: 0, x: 20, y: -20 }}
+                  whileInView={{ opacity: 1, x: 0, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, delay: 0.2 }}
+                  style={{ position: 'absolute', right: 0, top: 0, width: '55%', zIndex: 20 }}
+                  className="hover:z-30 transition-transform duration-500 hover:-translate-y-2"
                 >
-                  <div className="bg-white rounded-[2rem] p-2 shadow-2xl shadow-emerald-900/15 border border-emerald-50">
-                    <Image 
-                      src={biospectraCover} 
-                      alt="Biospectra Journal Cover" 
-                      width={300}
-                      height={400}
-                      className="rounded-[1.5rem] object-cover h-auto w-full"
-                    />
+                  <div style={{ background: '#fff', padding: 8, border: '1px solid rgba(26,46,26,0.1)', boxShadow: '0 15px 40px -15px rgba(0,0,0,0.15)' }}>
+                    <Image src={biospectraCover} alt="Biospectra Journal Cover" width={400} height={500} style={{ width: '100%', height: 'auto', display: 'block' }} />
                   </div>
                 </motion.div>
-              </div>
             </div>
 
-            {/* Content List */}
-            <div>
-              <SectionTitle 
-                title="Academic Excellence" 
-                subtitle="Guided by a distinguished editorial board from premier national and international institutions." 
-              />
-              <div className="space-y-5 mt-10">
+            {/* Right side: Text details */}
+            <div style={{ maxWidth: 600 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                <div style={{ width: 32, height: 1.5, background: '#1a2e1a' }} />
+                <span style={{ fontSize: 9.5, letterSpacing: '0.24em', textTransform: 'uppercase', fontWeight: 700, color: '#1a7a3a' }}>
+                  Editorial Board
+                </span>
+              </div>
+              <h2
+                style={{
+                  fontFamily: 'var(--font-crimson-pro), serif',
+                  fontSize: 'clamp(28px, 4vw, 40px)',
+                  fontWeight: 900,
+                  color: '#0d1a0d',
+                  lineHeight: 1.1,
+                  letterSpacing: '0.01em',
+                  margin: '0 0 12px 0'
+                }}
+              >
+                Academic Excellence
+              </h2>
+              <p style={{ fontSize: 13, color: '#4a5568', lineHeight: 1.7, margin: '0 0 40px 0', letterSpacing: '0.02em' }}>
+                Guided by a distinguished editorial board from premier national and international institutions.
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                 {[
                   { icon: ShieldCheck, title: 'Peer-Reviewed', desc: 'Rigorous vetting process to ensure high-quality research standards and data integrity.' },
                   { icon: Layers, title: 'Interdisciplinary', desc: 'Covering a broad spectrum of Life Sciences including Zoology, Botany, and Biotechnology.' },
                   { icon: Globe, title: 'Global Reach', desc: 'Indexed and recognized by researchers worldwide for innovative scientific contributions.' },
                 ].map((item, i) => (
-                  <motion.div 
-                    key={i} 
+                  <motion.div
+                    key={i}
                     initial={{ opacity: 0, y: 15 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.5 }}
-                    transition={{ delay: i * 0.15 + 0.2 }}
-                    className="group flex flex-col sm:flex-row items-start sm:space-x-5 p-5 bg-white border border-slate-100/80 rounded-[1.5rem] hover:bg-emerald-50/30 hover:shadow-xl hover:shadow-emerald-900/5 hover:-translate-y-1 transition-all duration-300"
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.15 + 0.2, duration: 0.5 }}
+                    style={{
+                      background: 'rgba(255,255,255,0.6)',
+                      border: '1px solid rgba(26,46,26,0.08)',
+                      padding: '24px',
+                      display: 'flex',
+                      gap: 20,
+                      alignItems: 'flex-start',
+                      position: 'relative'
+                    }}
+                    className="group hover:bg-white transition-colors duration-500"
                   >
-                    <div className="bg-emerald-50 p-4 rounded-2xl shadow-sm border border-emerald-100/50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white group-hover:shadow-md group-hover:scale-110 transition-all duration-300 shrink-0 mb-4 sm:mb-0">
-                      <item.icon size={22} className="stroke-[2.5]" />
+                    <div style={{ position: 'absolute', left: -1, top: -1, bottom: -1, width: 3, background: '#1a2e1a', transformOrigin: 'top', transform: 'scaleY(0)', transition: 'transform 0.5s ease' }} className="group-hover:scale-y-100" />
+                    
+                    <div style={{ padding: '12px', background: '#fff', border: '1px solid rgba(26,46,26,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <item.icon size={20} color="#1a2e1a" />
                     </div>
                     <div>
-                      <h4 className="text-xl font-black text-slate-900 mb-1.5 font-serif tracking-tight group-hover:text-emerald-800 transition-colors">{item.title}</h4>
-                      <p className="text-slate-600 text-[13px] leading-relaxed max-w-lg font-medium">{item.desc}</p>
+                      <h4 style={{ fontFamily: 'var(--font-crimson-pro), serif', fontSize: 18, fontWeight: 800, color: '#0d1a0d', marginBottom: 6, letterSpacing: '0.01em' }} className="group-hover:text-[#1a7a3a] transition-colors duration-300">{item.title}</h4>
+                      <p style={{ fontSize: 12, color: '#4a5568', margin: 0, lineHeight: 1.6 }}>{item.desc}</p>
                     </div>
                   </motion.div>
                 ))}
@@ -392,70 +682,80 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Recognition Section */}
-      <section className="py-8 md:py-12 bg-[#060c12] text-white relative overflow-hidden border-t border-emerald-950/40">
-        {/* Subtle Background Glow */}
-        <div className="absolute top-1/2 left-1/4 w-72 h-72 bg-emerald-600/5 rounded-full blur-[80px] -translate-y-1/2 pointer-events-none"></div>
-
-        <div className="container mx-auto px-4 md:px-6 relative z-10 max-w-6xl">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
+      {/* ══════════════════════════════════════════════════════════
+          RECOGNITION
+      ══════════════════════════════════════════════════════════ */}
+      <section style={{ background: '#112211', color: '#fff', borderTop: '1px solid rgba(255,255,255,0.06)', padding: 'clamp(60px, 10vw, 100px) 0', overflow: 'hidden', position: 'relative' }}>
+        {/* Subtle background graphics */}
+        <div style={{ position: 'absolute', top: 0, right: 0, width: '50%', height: '100%', opacity: 0.05, backgroundImage: `radial-gradient(circle, #fff 1px, transparent 1px)`, backgroundSize: '32px 32px' }} />
+        
+        <div style={{ maxWidth: 1600, margin: '0 auto', padding: '0 clamp(20px, 4vw, 60px)', position: 'relative', zIndex: 10 }}>
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20">
+            
             <div className="lg:w-[50%]">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="inline-flex items-center space-x-1.5 bg-emerald-900/30 border border-emerald-800/40 rounded-full px-2.5 py-0.5 text-emerald-400 text-[8px] font-bold uppercase tracking-widest mb-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 opacity-80"></div>
-                  <span>Official Recognition</span>
+              <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+                  <div style={{ width: 32, height: 1.5, background: '#c9c9bc' }} />
+                  <span style={{ fontSize: 9.5, letterSpacing: '0.24em', textTransform: 'uppercase', fontWeight: 700, color: '#c9c9bc' }}>
+                    Official Recognition
+                  </span>
                 </div>
-                
-                <h2 className="text-xl md:text-2xl font-extrabold mb-3 tracking-normal leading-snug">
-                  <span className="text-slate-100">Globally Recognized </span>
-                  <span className="text-emerald-400">& Indexed</span>
+                <h2
+                  style={{
+                    fontFamily: 'var(--font-crimson-pro), serif',
+                    fontSize: 'clamp(28px, 4vw, 40px)',
+                    fontWeight: 900,
+                    color: '#fff',
+                    lineHeight: 1.1,
+                    letterSpacing: '0.01em',
+                    margin: '0 0 20px 0'
+                  }}
+                >
+                  Globally Recognized & Indexed
                 </h2>
-                
-                <p className="text-slate-400 text-[13px] md:text-sm mb-5 max-w-md leading-relaxed">
-                  Biospectra is proud to be part of the <strong className="text-slate-200">SJIF Journals Master List</strong>, reflecting our commitment to academic rigor and scientific impact. Our Impact Factor is a testament to the exceptional quality of research we publish.
+                <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', lineHeight: 1.7, margin: '0 0 32px 0', letterSpacing: '0.02em', maxWidth: 500 }}>
+                  Biospectra is proud to be part of the <strong style={{ color: '#fff', fontWeight: 600 }}>SJIF Journals Master List</strong>, reflecting our commitment to academic rigor and scientific impact.
                 </p>
-                
-                <div className="inline-flex flex-col bg-[#0b1715]/60 border border-emerald-900/40 rounded-xl px-4 py-2.5 backdrop-blur-sm">
-                  <span className="text-emerald-500 font-bold text-[8px] uppercase tracking-widest mb-0.5">SJIF Impact Factor</span>
-                  <div className="flex items-baseline space-x-1.5">
-                    <span className="text-xl md:text-2xl font-bold text-slate-100 tracking-tight">8.546</span>
-                    <span className="text-[9px] text-emerald-500/80">(2023)</span>
+                <div style={{ 
+                  display: 'inline-flex', 
+                  flexDirection: 'column', 
+                  background: 'rgba(255,255,255,0.03)', 
+                  border: '1px solid rgba(255,255,255,0.1)', 
+                  padding: '20px 32px' 
+                }}>
+                  <span style={{ fontSize: 9.5, letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 700, color: '#c9c9bc', marginBottom: 8 }}>
+                    SJIF Impact Factor
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                    <span style={{ fontFamily: 'var(--font-crimson-pro), serif', fontSize: 36, fontWeight: 900, color: '#fff', lineHeight: 1 }}>
+                      8.546
+                    </span>
+                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>
+                      (2023)
+                    </span>
                   </div>
                 </div>
               </motion.div>
             </div>
-            
-            <div className="lg:w-[40%] md:w-2/3 mx-auto w-full">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="relative group"
-              >
-                {/* Certificate Glow */}
-                <div className="absolute -inset-1 bg-emerald-500/10 rounded-2xl blur-md transition-all duration-500 opacity-0 group-hover:opacity-100"></div>
-                
-                {/* Certificate Container */}
-                <div className="relative bg-white/[0.02] p-2 rounded-xl border border-white/5 shadow-xl backdrop-blur-sm transition-transform duration-500 hover:scale-[1.01]">
-                  <Image 
-                    src={certificateImg} 
-                    alt="SJIF Certificate of Indexing" 
-                    width={600}
-                    height={450}
-                    className="rounded-lg w-full h-auto object-contain shadow-inner"
-                  />
+
+            <div className="lg:w-[45%] md:w-2/3 mx-auto w-full">
+              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }} className="relative group">
+                <div style={{ background: '#fff', padding: 12, border: '1px solid rgba(255,255,255,0.1)', position: 'relative' }}>
+                  {/* Inner border */}
+                  <div style={{ border: '1px solid rgba(26,46,26,0.1)' }}>
+                    <Image src={certificateImg} alt="SJIF Certificate of Indexing" width={600} height={450} style={{ width: '100%', height: 'auto', display: 'block' }} />
+                  </div>
                 </div>
+                {/* Accent lines offset square decoration */}
+                <div style={{ position: 'absolute', top: -10, left: -10, width: 40, height: 40, borderTop: '2px solid #c9c9bc', borderLeft: '2px solid #c9c9bc' }} />
+                <div style={{ position: 'absolute', bottom: -10, right: -10, width: 40, height: 40, borderBottom: '2px solid #c9c9bc', borderRight: '2px solid #c9c9bc' }} />
               </motion.div>
             </div>
+
           </div>
         </div>
       </section>
+
     </div>
   );
 };
