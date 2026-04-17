@@ -1,13 +1,39 @@
 @import "tailwindcss";
 
 :root {
-  --text: #334155; /* slate-700 */
-  --text-h: #0f172a; /* slate-900 */
-  --bg: #fcfdfd; /* extremely light pearl */
-  --border: #e2e8f0; /* slate-200 */
-  --accent: #10b981; /* emerald-500 */
-  --accent-dark: #022c22; /* deep forest green */
-  --accent-soft: rgba(16, 185, 129, 0.05);
+  --text: #3d2a5a;           /* deep purple-slate */
+  --text-h: #1a0a2e;         /* near-black purple */
+  --bg: #fdfcff;             /* white with purple whisper */
+  --border: #e9e0f5;         /* soft lavender border */
+  --accent: #8b00cc;         /* vivid purple */
+  --accent-mid: #6200a8;     /* deep rich purple */
+  --accent-dark: #2d0057;    /* near-black purple */
+  --accent-magenta: #c400c4; /* magenta-purple from cover */
+  --accent-soft: rgba(139, 0, 204, 0.06);
+  --purple-light: #f5eeff;   /* barely-there lavender */
+  --purple-mist: #ede0ff;    /* lavender mist for sections */
+
+  /* Fluid Typography Scale */
+  --font-xs:  clamp(0.6rem, 0.6vw + 0.4rem, 0.75rem);
+  --font-sm:  clamp(0.8rem, 0.8vw + 0.6rem, 0.95rem);
+  --font-base: clamp(1rem, 1vw + 0.8rem, 1.15rem);
+  --font-md:  clamp(1.2rem, 1.5vw + 1rem, 1.5rem);
+  --font-lg:  clamp(1.5rem, 2vw + 1.2rem, 2.25rem);
+  --font-xl:  clamp(2rem, 4vw + 1.5rem, 4rem);
+  --font-2xl: clamp(3rem, 6vw + 2rem, 6rem);
+
+  /* Responsive Spacing */
+  --space-xs: clamp(0.5rem, 1vw, 0.75rem);
+  --space-sm: clamp(1rem, 2vw, 1.5rem);
+  --space-md: clamp(2rem, 4vw, 3rem);
+  --space-lg: clamp(3rem, 6vw, 5rem);
+  --space-xl: clamp(5rem, 10vw, 8rem);
+
+  /* Safe Area Insets */
+  --sat: env(safe-area-inset-top);
+  --sar: env(safe-area-inset-right);
+  --sab: env(safe-area-inset-bottom);
+  --sal: env(safe-area-inset-left);
 
   font-family: var(--font-inter), sans-serif;
   color: var(--text);
@@ -93,7 +119,7 @@ code {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1; /* slate-300 */
+  background-color: #c9b8e8; /* soft lavender */
   border: 4px solid transparent;
   background-clip: content-box;
   border-radius: 20px;
@@ -101,13 +127,13 @@ code {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #10b981; /* emerald-500 */
+  background-color: #8b00cc; /* vivid purple */
 }
 
 /* Firefox Support */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-color: #c9b8e8 transparent;
 }
 
 .hide-scrollbar::-webkit-scrollbar {

@@ -16,6 +16,17 @@ const NAV_LINKS = [
   { name: 'Gallery',        path: '/gallery' },
 ];
 
+// Purple palette — same tokens as page.js
+const P = {
+  deepPurple: '#2d0057',
+  richPurple: '#5a0096',
+  vivid:      '#8b00cc',
+  magenta:    '#be00be',
+  textBody:   '#3d2a5a',
+  textMuted:  '#7c5da0',
+  border:     'rgba(139,0,204,0.1)',
+};
+
 const Navbar = () => {
   const [isOpen,   setIsOpen]   = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -27,51 +38,48 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => setIsOpen(false), [pathname]);
 
   return (
     <>
       <nav
-        className="fixed w-full z-50 transition-all duration-500"
+        className="fixed w-full z-100 transition-all duration-500"
         style={{
           background: scrolled
-            ? 'rgba(247,245,239,0.96)'
-            : 'rgba(247,245,239,0.85)',
-          backdropFilter: 'blur(18px)',
+            ? 'rgba(253,252,255,0.97)'
+            : 'rgba(253,252,255,0.88)',
+          backdropFilter: 'blur(20px)',
           borderBottom: scrolled
-            ? '1px solid rgba(26,46,26,0.12)'
-            : '1px solid rgba(26,46,26,0.06)',
+            ? `1px solid ${P.border}`
+            : '1px solid rgba(139,0,204,0.05)',
           boxShadow: scrolled
-            ? '0 4px 24px rgba(26,46,26,0.08)'
+            ? '0 4px 28px rgba(90,0,150,0.1)'
             : 'none',
+          paddingTop: 'var(--sat, 0px)', // Notch handling
         }}
       >
-        {/* Top accent line — matches the hero's top bar */}
+        {/* Top accent line — purple→magenta gradient */}
         <div
-          className="absolute top-0 left-0 right-0 h-[2px]"
-          style={{ background: '#1a2e1a' }}
+          className="absolute top-0 left-0 right-0 h-[3px]"
+          style={{ background: `linear-gradient(90deg, ${P.deepPurple}, ${P.magenta}, ${P.vivid})` }}
         />
 
         <div
           className="mx-auto flex items-center justify-between"
-          style={{
-            maxWidth: 1600,
-            padding: '10px clamp(16px,4vw,48px)',
-          }}
+          style={{ maxWidth: 1600, padding: '10px clamp(12px, 3vw, 48px)' }}
         >
 
-          {/* ── BRAND BLOCK (unchanged look) ── */}
-          <Link href="/" className="flex items-center gap-3 shrink-0 group outline-none">
+          {/* ── BRAND BLOCK ── */}
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 shrink-0 group outline-none">
             <motion.div
               whileHover={{ scale: 1.06 }}
               transition={{ type: 'spring', stiffness: 300 }}
+              className="relative w-10 h-10 sm:w-14 sm:h-14"
             >
               <Image
                 src="/assets/mset-logo-png-removebg-preview.png"
                 alt="MSET Logo"
-                width={56}
-                height={56}
+                fill
                 className="object-contain"
                 priority
               />
@@ -82,38 +90,39 @@ const Navbar = () => {
                 style={{
                   fontFamily: 'var(--font-crimson-pro), serif',
                   fontWeight: 900,
-                  fontSize: 'clamp(13px,1.4vw,18px)',
+                  fontSize: 'clamp(11px, 3.5vw, 18px)',
                   lineHeight: 1.1,
                   letterSpacing: '0.02em',
                   textTransform: 'uppercase',
-                  color: '#0d1a0d',
+                  color: '#000',
                   whiteSpace: 'nowrap',
-                  transition: 'color 0.2s ease',
                 }}
-                className="group-hover:text-emerald-700 transition-colors"
+                className="group-hover:text-[#be00be] transition-colors"
               >
-                Madhawi Shyam Educational Trust
+                Madhawi Shyam <span className="hidden xs:inline">Educational Trust</span>
+                <span className="xs:hidden">E. T.</span>
               </span>
               <span
                 style={{
-                  fontSize: 8.5,
+                  fontSize: 'clamp(7px, 2vw, 8.5px)',
                   fontWeight: 700,
-                  letterSpacing: '0.14em',
+                  letterSpacing: '0.12em',
                   textTransform: 'uppercase',
-                  color: '#6b7280',
+                  color: P.textMuted,
                   lineHeight: 1.4,
                   marginTop: 2,
                 }}
+                className="hidden sm:block"
               >
-                & International Consortium of Contemporary Biologists (ICCB)
+                &amp; International Consortium of Contemporary Biologists (ICCB)
               </span>
               <span
                 style={{
-                  fontSize: 8,
+                  fontSize: 'clamp(6.5px, 1.8vw, 8px)',
                   fontWeight: 700,
-                  letterSpacing: '0.18em',
+                  letterSpacing: '0.16em',
                   textTransform: 'uppercase',
-                  color: '#1a7a3a',
+                  color: P.magenta,
                   lineHeight: 1.4,
                   marginTop: 1,
                 }}
@@ -138,16 +147,15 @@ const Navbar = () => {
                     fontWeight: isActive ? 700 : 500,
                     letterSpacing: '0.08em',
                     textTransform: 'uppercase',
-                    color: isActive ? '#1a2e1a' : '#4a5568',
+                    color: isActive ? P.deepPurple : P.textBody,
                     textDecoration: 'none',
                     transition: 'color 0.2s ease',
                     whiteSpace: 'nowrap',
                   }}
-                  onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = '#1a2e1a'; }}
-                  onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = '#4a5568'; }}
+                  onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = P.richPurple; }}
+                  onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = P.textBody; }}
                 >
                   {link.name}
-                  {/* Active underline */}
                   {isActive && (
                     <motion.div
                       layoutId="nav-underline"
@@ -157,7 +165,7 @@ const Navbar = () => {
                         left: 14,
                         right: 14,
                         height: 2,
-                        background: '#1a2e1a',
+                        background: `linear-gradient(90deg, ${P.deepPurple}, ${P.magenta})`,
                         borderRadius: 1,
                       }}
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
@@ -167,23 +175,16 @@ const Navbar = () => {
               );
             })}
 
-            {/* Divider */}
-            <div
-              style={{
-                width: 1,
-                height: 20,
-                background: 'rgba(26,46,26,0.2)',
-                margin: '0 10px',
-              }}
-            />
+            <div style={{ width: 1, height: 20, background: P.border, margin: '0 10px' }} />
 
-            {/* Submit CTA */}
             <Link href="/submit">
               <button
                 style={{
-                  background: pathname === '/submit' ? '#1a2e1a' : 'transparent',
-                  color: pathname === '/submit' ? '#fff' : '#1a2e1a',
-                  border: '1.5px solid #1a2e1a',
+                  background: pathname === '/submit'
+                    ? `linear-gradient(135deg, ${P.deepPurple}, ${P.richPurple})`
+                    : 'transparent',
+                  color: pathname === '/submit' ? '#fff' : P.richPurple,
+                  border: `1.5px solid ${P.richPurple}`,
                   padding: '8px 20px',
                   fontSize: 11,
                   fontWeight: 700,
@@ -193,13 +194,17 @@ const Navbar = () => {
                   transition: 'all 0.22s ease',
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.background = '#1a2e1a';
+                  e.currentTarget.style.background = `linear-gradient(135deg, ${P.richPurple}, ${P.magenta})`;
                   e.currentTarget.style.color = '#fff';
+                  e.currentTarget.style.boxShadow = `0 6px 18px rgba(90,0,150,0.3)`;
+                  e.currentTarget.style.borderColor = P.magenta;
                 }}
                 onMouseLeave={e => {
                   if (pathname !== '/submit') {
                     e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.color = '#1a2e1a';
+                    e.currentTarget.style.color = P.richPurple;
+                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.borderColor = P.richPurple;
                   }
                 }}
               >
@@ -211,72 +216,113 @@ const Navbar = () => {
           {/* ── MOBILE HAMBURGER ── */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden"
+            className="lg:hidden z-[110]"
             style={{
               background: 'none',
-              border: '1.5px solid rgba(26,46,26,0.25)',
-              padding: '7px',
+              border: `1.5px solid ${isOpen ? 'transparent' : P.border}`,
+              padding: '10px',
               cursor: 'pointer',
-              color: '#1a2e1a',
+              color: isOpen ? P.magenta : P.richPurple,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              borderRadius: '8px',
+              transition: 'all 0.3s ease',
             }}
             aria-label="Toggle menu"
           >
-            {isOpen ? <X size={20} /> : <Menu size={20} />}
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </nav>
 
-      {/* ── MOBILE DRAWER ── */}
+      {/* ── MOBILE FULLSCREEN OVERLAY ── */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.22, ease: 'easeOut' }}
-            className="lg:hidden fixed z-40"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="lg:hidden fixed inset-0 z-90 bg-white"
             style={{
-              top: 80,
-              left: 16,
-              right: 16,
-              background: '#f7f5ef',
-              border: '1px solid rgba(26,46,26,0.12)',
-              boxShadow: '0 16px 40px rgba(26,46,26,0.12)',
+              paddingTop: 'calc(80px + var(--sat, 0px))',
+              paddingBottom: 'var(--sab, 0px)',
             }}
           >
-            {/* Top accent */}
-            <div style={{ height: 2, background: '#1a2e1a' }} />
+            {/* Background elements */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+               <div className="absolute top-[-10%] right-[-10%] w-[50%] aspect-square rounded-full bg-purple-50 blur-[100px]" />
+               <div className="absolute bottom-[-10%] left-[-10%] w-[50%] aspect-square rounded-full bg-magenta-50/20 blur-[100px]" />
+            </div>
 
-            <div style={{ padding: '16px 0' }}>
-              {[...NAV_LINKS, { name: 'Submit', path: '/submit' }].map((link, i) => {
+            <nav className="relative h-full flex flex-col px-8 py-10 overflow-y-auto">
+              {NAV_LINKS.map((link, i) => {
                 const isActive = pathname === link.path;
                 return (
-                  <Link
+                  <motion.div
                     key={link.name}
-                    href={link.path}
-                    onClick={() => setIsOpen(false)}
-                    style={{
-                      display: 'block',
-                      padding: '13px 24px',
-                      fontSize: 12,
-                      fontWeight: isActive ? 700 : 500,
-                      letterSpacing: '0.14em',
-                      textTransform: 'uppercase',
-                      color: isActive ? '#1a2e1a' : '#4a5568',
-                      textDecoration: 'none',
-                      borderLeft: isActive ? '2px solid #1a2e1a' : '2px solid transparent',
-                      background: isActive ? 'rgba(26,46,26,0.04)' : 'transparent',
-                      transition: 'all 0.18s ease',
-                    }}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.05 + 0.1 }}
                   >
-                    {link.name}
-                  </Link>
+                    <Link
+                      href={link.path}
+                      onClick={() => setIsOpen(false)}
+                      className="block py-4 border-b border-purple-50 outline-none"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span
+                          style={{
+                            fontSize: 24,
+                            fontFamily: 'var(--font-crimson-pro), serif',
+                            fontWeight: isActive ? 900 : 700,
+                            color: isActive ? P.magenta : P.deepPurple,
+                            letterSpacing: '0.02em',
+                          }}
+                        >
+                          {link.name}
+                        </span>
+                        {isActive && <div className="w-2 h-2 rounded-full bg-magenta" style={{ backgroundColor: P.magenta }} />}
+                      </div>
+                    </Link>
+                  </motion.div>
                 );
               })}
-            </div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: NAV_LINKS.length * 0.05 + 0.2 }}
+                className="mt-12"
+              >
+                <Link href="/submit" onClick={() => setIsOpen(false)}>
+                  <button
+                    style={{
+                      width: '100%',
+                      background: `linear-gradient(135deg, ${P.deepPurple}, ${P.richPurple})`,
+                      color: '#fff',
+                      padding: '18px',
+                      fontSize: 14,
+                      fontWeight: 800,
+                      letterSpacing: '0.2em',
+                      textTransform: 'uppercase',
+                      borderRadius: '12px',
+                      boxShadow: '0 10px 30px rgba(90,0,150,0.2)',
+                    }}
+                  >
+                    Submit Article
+                  </button>
+                </Link>
+              </motion.div>
+
+              {/* Mobile Footer Info */}
+              <div className="mt-auto pt-10 text-center">
+                <p style={{ fontSize: 10, color: P.textMuted, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                  Biospectra Journal • ISSN: 0973-7057
+                </p>
+              </div>
+            </nav>
           </motion.div>
         )}
       </AnimatePresence>
