@@ -10,6 +10,16 @@ const Gallery = () => {
   const [selectedImg, setSelectedImg] = useState(null);
   const [query, setQuery] = useState('');
 
+  const P = {
+    deepPurple: '#2d0057',
+    richPurple: '#5a0096',
+    magenta:    '#be00be',
+    textBody:   '#3d2a5a',
+    textMuted:  '#7c5da0',
+    lavenderMist: '#f5eeff',
+    border:     'rgba(139,0,204,0.1)',
+  };
+
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
     if (!q) return galleryData;
@@ -21,73 +31,104 @@ const Gallery = () => {
   }, [query]);
 
   return (
-    <div className="pt-32 pb-20 bg-slate-50 min-h-screen">
+    <div 
+      className="pt-40 pb-20 min-h-screen"
+      style={{ background: '#fdfcff' }}
+    >
       <div className="container mx-auto px-4 md:px-6">
-        <SectionTitle 
-          title="Scientific Gallery" 
-          subtitle="A visual collection of research discoveries, award ceremonies, and life science observations from our contributors."
-          centered
-        />
+        
+        {/* Header Title */}
+        <div className="text-center mb-16 max-w-2xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center"
+          >
+            <div style={{ width: 40, height: 2, background: P.magenta, marginBottom: 20 }} />
+            <h1 
+              style={{ fontFamily: 'var(--font-crimson-pro), serif', color: P.deepPurple }}
+              className="text-3xl md:text-5xl font-black mb-4 tracking-tight uppercase"
+            >
+              Scientific Gallery
+            </h1>
+            <p style={{ color: P.textBody }} className="text-sm leading-relaxed opacity-80">
+              A visual collection of research discoveries, award ceremonies, and life science observations from our contributors.
+            </p>
+          </motion.div>
+        </div>
 
         {/* Search Bar */}
-        <div className="max-w-lg mx-auto mb-10 relative">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+        <div className="max-w-xl mx-auto mb-16 relative group">
+          <Search size={18} style={{ color: P.textMuted }} className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none transition-colors group-focus-within:text-magenta" />
           <input
             type="text"
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder="Search by title, category or date…"
-            className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+            style={{ border: `1px solid ${P.border}` }}
+            className="w-full pl-14 pr-6 py-4 bg-white text-sm text-slate-800 placeholder-slate-300 shadow-xl shadow-purple-900/5 focus:outline-none focus:border-magenta focus:ring-4 focus:ring-magenta/5 transition-all"
           />
           {query && (
-            <button onClick={() => setQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700">
-              <X size={15} />
+            <button onClick={() => setQuery('')} style={{ color: P.textMuted }} className="absolute right-5 top-1/2 -translate-y-1/2 hover:text-magenta transition-colors">
+              <X size={18} />
             </button>
           )}
         </div>
 
         {/* Results Count */}
         {query && (
-          <p className="text-center text-sm text-slate-500 mb-6">
-            Showing <span className="font-semibold text-emerald-700">{filtered.length}</span> result{filtered.length !== 1 ? 's' : ''} for &ldquo;{query}&rdquo;
+          <p className="text-center text-xs font-bold uppercase tracking-widest mb-10" style={{ color: P.textMuted }}>
+            Found <span style={{ color: P.magenta }}>{filtered.length}</span> result{filtered.length !== 1 ? 's' : ''}
           </p>
         )}
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filtered.length === 0 ? (
-            <div className="col-span-full text-center py-20 text-slate-400 text-sm">No images match your search.</div>
+            <div style={{ color: P.textMuted }} className="col-span-full text-center py-20 text-sm font-medium border-2 border-dashed border-purple-100 italic">No discoveries match your search.</div>
           ) : filtered.map((item) => (
             <motion.div
               key={item.id}
               layoutId={`img-${item.id}`}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
               onClick={() => setSelectedImg(item)}
-              className="group relative h-56 rounded-xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-shadow bg-slate-200"
+              style={{ border: `1px solid ${P.border}` }}
+              className="group relative h-64 overflow-hidden cursor-pointer shadow-sm hover:shadow-2xl transition-all duration-500 bg-slate-50"
             >
               <Image
                 src={item.image}
                 alt={item.caption}
                 fill
-                className="object-cover group-hover:scale-110 transition-transform duration-500"
+                className="object-cover group-hover:scale-105 transition-transform duration-700"
               />
               {/* Hover Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
-                <span className="text-emerald-400 text-[10px] font-bold uppercase tracking-widest mb-1">{item.category}</span>
-                <p className="text-white font-semibold text-xs line-clamp-2 leading-snug">{item.caption}</p>
+              <div 
+                style={{ background: 'linear-gradient(to top, rgba(45,0,87,0.9), transparent)' }}
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-5"
+              >
+                <div style={{ background: P.magenta }} className="w-6 h-0.5 mb-3" />
+                <span style={{ color: P.magenta }} className="text-[9px] font-black uppercase tracking-[0.2em] mb-1">{item.category}</span>
+                <p className="text-white font-bold text-xs line-clamp-2 leading-relaxed">{item.caption}</p>
               </div>
-              {/* Always-visible date badge */}
+              
+              {/* Expand Icon */}
+              <div 
+                style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)' }}
+                className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 w-8 h-8 rounded-full flex items-center justify-center text-white"
+              >
+                <Maximize2 size={14} />
+              </div>
+
+              {/* Date Tag */}
               {item.date && (
-                <div className="absolute top-2 left-2 flex items-center bg-black/60 backdrop-blur-sm text-white text-[10px] font-medium px-2 py-0.5 rounded-full">
-                  <Calendar size={9} className="mr-1 opacity-80" />
+                <div 
+                  style={{ background: 'rgba(45,0,87,0.7)', backdropFilter: 'blur(10px)' }}
+                  className="absolute bottom-4 right-4 text-white text-[9px] font-black px-2.5 py-1 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity"
+                >
                   {item.date}
                 </div>
               )}
-              {/* Expand Icon */}
-              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/20 backdrop-blur-md w-7 h-7 rounded-full flex items-center justify-center text-white">
-                <Maximize2 size={13} />
-              </div>
             </motion.div>
           ))}
         </div>
@@ -101,34 +142,46 @@ const Gallery = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedImg(null)}
-            className="fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-lg flex items-center justify-center p-4 md:p-10"
+            className="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-12"
           >
-            <button className="absolute top-6 right-6 text-white hover:text-emerald-400 transition-colors">
-              <X size={28} />
+            <button 
+              className="absolute top-8 right-8 text-white/50 hover:text-magenta transition-colors hover:rotate-90 duration-300"
+            >
+              <X size={32} />
             </button>
             <motion.div
               layoutId={`img-${selectedImg.id}`}
-              className="relative max-w-4xl w-full bg-white rounded-2xl overflow-hidden shadow-2xl"
+              style={{ border: `1px solid rgba(255,255,255,0.1)` }}
+              className="relative max-w-5xl w-full bg-white shadow-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              <Image
-                src={selectedImg.image}
-                alt={selectedImg.caption}
-                width={800}
-                height={600}
-                className="w-full h-auto max-h-[65vh] object-contain bg-slate-100"
-              />
-              <div className="p-6 bg-white">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-emerald-700 text-[11px] font-bold uppercase tracking-widest">{selectedImg.category}</span>
+              <div className="relative aspect-[16/9] md:aspect-video w-full">
+                <Image
+                  src={selectedImg.image}
+                  alt={selectedImg.caption}
+                  fill
+                  className="object-contain bg-black"
+                />
+              </div>
+              <div className="p-10 bg-white">
+                <div className="flex items-center gap-4 mb-4">
+                  <span style={{ color: P.magenta }} className="text-[10px] font-black uppercase tracking-[0.3em]">{selectedImg.category}</span>
+                  <div className="flex-grow h-[1px]" style={{ background: P.border }} />
                   {selectedImg.date && (
-                    <span className="flex items-center text-slate-400 text-[11px]">
-                      <Calendar size={11} className="mr-1" /> {selectedImg.date}
+                    <span style={{ color: P.textMuted }} className="flex items-center text-[10px] font-bold uppercase">
+                      <Calendar size={12} className="mr-2" /> {selectedImg.date}
                     </span>
                   )}
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-1.5 font-serif">{selectedImg.caption}</h3>
-                <p className="text-slate-500 text-sm">Part of the Biospectra research documentation system. Contributed by the respective researchers and authors.</p>
+                <h3 
+                  style={{ fontFamily: 'var(--font-crimson-pro), serif', color: P.deepPurple }}
+                  className="text-2xl md:text-3xl font-bold mb-4"
+                >
+                  {selectedImg.caption}
+                </h3>
+                <p style={{ color: P.textBody }} className="text-sm leading-relaxed opacity-80 max-w-3xl">
+                  Part of the Biospectra research documentation system. This visual data has been contributed by lead researchers and authors associated with the Madhawi Shyam Educational Trust.
+                </p>
               </div>
             </motion.div>
           </motion.div>

@@ -89,24 +89,23 @@ const Navbar = () => {
               <span
                 style={{
                   fontFamily: 'var(--font-crimson-pro), serif',
-                  fontWeight: 900,
-                  fontSize: 'clamp(11px, 3.5vw, 18px)',
+                  fontWeight: 800,
+                  fontSize: 'clamp(12px, 3.8vw, 19px)',
                   lineHeight: 1.1,
-                  letterSpacing: '0.02em',
+                  letterSpacing: '0.01em',
                   textTransform: 'uppercase',
                   color: '#000',
                   whiteSpace: 'nowrap',
                 }}
                 className="group-hover:text-[#be00be] transition-colors"
               >
-                Madhawi Shyam <span className="hidden xs:inline">Educational Trust</span>
-                <span className="xs:hidden">E. T.</span>
+                Madhawi Shyam Educational Trust
               </span>
               <span
                 style={{
-                  fontSize: 'clamp(7px, 2vw, 8.5px)',
+                  fontSize: 'clamp(7px, 2.2vw, 9px)',
                   fontWeight: 700,
-                  letterSpacing: '0.12em',
+                  letterSpacing: '0.1em',
                   textTransform: 'uppercase',
                   color: P.textMuted,
                   lineHeight: 1.4,
@@ -118,9 +117,9 @@ const Navbar = () => {
               </span>
               <span
                 style={{
-                  fontSize: 'clamp(6.5px, 1.8vw, 8px)',
+                  fontSize: 'clamp(6.5px, 2vw, 8.5px)',
                   fontWeight: 700,
-                  letterSpacing: '0.16em',
+                  letterSpacing: '0.14em',
                   textTransform: 'uppercase',
                   color: P.magenta,
                   lineHeight: 1.4,
