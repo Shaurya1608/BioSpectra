@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Github, FileText } from 'lucide-react';
 
@@ -13,6 +13,11 @@ const P = {
 };
 
 const Footer = () => {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <footer 
       style={{ background: `linear-gradient(135deg, ${P.deepPurple} 0%, #1a0038 100%)`, color: 'rgba(255,255,255,0.7)' }}
@@ -56,8 +61,8 @@ const Footer = () => {
           {/* Quick Links */}
           <div>
             <h3 
-              style={{ fontFamily: 'var(--font-crimson-pro), serif' }}
-              className="text-white font-bold text-lg mb-7 tracking-wide uppercase"
+              style={{ fontFamily: 'var(--font-crimson-pro), serif', color: '#fff' }}
+              className="font-bold text-lg mb-7 tracking-wide uppercase"
             >
               Quick Links
             </h3>
@@ -85,8 +90,8 @@ const Footer = () => {
           {/* Article Categories */}
           <div>
             <h3 
-              style={{ fontFamily: 'var(--font-crimson-pro), serif' }}
-              className="text-white font-bold text-lg mb-7 tracking-wide uppercase"
+              style={{ fontFamily: 'var(--font-crimson-pro), serif', color: '#fff' }}
+              className="font-bold text-lg mb-7 tracking-wide uppercase"
             >
               Categories
             </h3>
@@ -111,8 +116,8 @@ const Footer = () => {
           {/* Contact Info */}
           <div>
             <h3 
-              style={{ fontFamily: 'var(--font-crimson-pro), serif' }}
-              className="text-white font-bold text-lg mb-7 tracking-wide uppercase"
+              style={{ fontFamily: 'var(--font-crimson-pro), serif', color: '#fff' }}
+              className="font-bold text-lg mb-7 tracking-wide uppercase"
             >
               Contact Us
             </h3>
@@ -138,7 +143,7 @@ const Footer = () => {
           className="pt-10 flex flex-col md:flex-row justify-between items-center text-[10px] sm:text-xs uppercase tracking-[0.15em]"
         >
           <p className="opacity-60 text-center md:text-left mb-4 md:mb-0">
-            © {new Date().getFullYear()} Biospectra Journal. All Rights Reserved. Reg. No. 20560/IV-1815/2005
+            © {mounted ? new Date().getFullYear() : '2024'} Biospectra Journal. All Rights Reserved. Reg. No. 20560/IV-1815/2005
           </p>
           <p className="font-bold text-white opacity-80">
             Design & Development by Madhawi Shyam Educational Trust

@@ -1,5 +1,5 @@
 'use client';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import {
@@ -43,6 +43,12 @@ const P = {
 const Home = () => {
   const scrollContainerRef = useRef(null);
   const [activeArea, setActiveArea] = useState(1);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
 
   const scroll = (direction) => {
     if (scrollContainerRef.current) {
@@ -62,7 +68,7 @@ const Home = () => {
       ══════════════════════════════════════════════════════════ */}
       <section
         className="relative min-h-screen w-full overflow-hidden flex flex-col lg:block"
-        style={{ background: P.offWhite, fontFamily: 'var(--font-inter), sans-serif', paddingTop: 'var(--sat, 0px)' }}
+        style={{ background: P.lavenderMist, fontFamily: 'var(--font-inter), sans-serif', paddingTop: 'var(--sat, 0px)' }}
       >
         {/* Top accent bar — magenta-to-purple */}
         <div
@@ -89,11 +95,12 @@ const Home = () => {
         </div>
 
         {/* ── RESPONSIVE GRID ── */}
-        <div className="relative z-10 min-h-screen flex flex-col lg:grid lg:grid-cols-[1fr_1.15fr]">
+        <div className="relative z-10 min-h-[100svh] pt-[80px] lg:pt-[100px] pb-4 sm:pb-6 lg:pb-8 px-4 sm:px-6 lg:px-8 flex flex-col lg:grid lg:grid-cols-[1fr_1.15fr] gap-4 lg:gap-6">
 
           {/* ────────────── CONTENT COLUMN (Order: 1) ────────────── */}
           <div
-            className="flex flex-col justify-center relative px-6 sm:px-12 lg:pl-[min(8.5vw,110px)] lg:pr-[min(5vw,70px)] pt-32 pb-12 lg:py-0"
+            className="flex flex-col justify-center relative px-6 sm:px-12 lg:pl-[min(8.5vw,110px)] lg:pr-[min(5vw,70px)] py-12 lg:py-8 bg-white rounded-[2rem]"
+            style={{ boxShadow: '0 10px 40px -10px rgba(0,0,0,0.05)' }}
           >
 
             {/* Vertical watermark */}
@@ -288,7 +295,7 @@ const Home = () => {
 
           {/* ────────────── VISUAL COLUMN (Order: 2) ────────────── */}
           <div
-            className="relative flex flex-col items-center justify-center overflow-hidden lg:min-h-screen py-20 lg:py-0"
+            className="relative flex flex-col items-center justify-center overflow-hidden rounded-[2rem] pb-20 pt-10 lg:py-0"
             style={{ minHeight: '400px' }}
           >
             {/* Background design */}
@@ -821,7 +828,7 @@ const Home = () => {
           
           <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-[1400px] gap-10">
             <p style={{ fontSize: 13, color: P.textMuted, opacity: 0.8 }} className="text-center md:text-left">
-              &copy; {new Date().getFullYear()} Biospectra Journal. Empowering biological sciences since 2006.
+              &copy; {mounted ? new Date().getFullYear() : '2024'} Biospectra Journal. Empowering biological sciences since 2006.
             </p>
             <div className="flex flex-wrap justify-center items-center gap-x-10 gap-y-4">
               {['About', 'Editorial Board', 'Archive', 'Contact'].map(item => (

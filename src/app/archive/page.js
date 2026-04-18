@@ -58,7 +58,7 @@ const Archive = () => {
   return (
     <div 
       className="pt-40 pb-20 min-h-screen"
-      style={{ background: '#fdfcff' }}
+      style={{ background: P.lavenderMist }}
     >
       <div className="container mx-auto px-4 md:px-6">
         

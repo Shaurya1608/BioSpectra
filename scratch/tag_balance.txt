@@ -1,0 +1,775 @@
+1: 0 (diff: 0) | 'use client';
+2: 0 (diff: 0) | import React, { useRef, useState } from 'react';
+3: 0 (diff: 0) | import dynamic from 'next/dynamic';
+4: 0 (diff: 0) | import { motion } from 'framer-motion';
+5: 0 (diff: 0) | import {
+6: 0 (diff: 0) | ArrowRight, BookOpen, ShieldCheck,
+7: 0 (diff: 0) | Layers, Globe, ChevronLeft, ChevronRight,
+8: 0 (diff: 0) | } from 'lucide-react';
+9: 0 (diff: 0) | import Link from 'next/link';
+10: 0 (diff: 0) | import Image from 'next/image';
+11: 0 (diff: 0) | import ArticleCard from '@/components/common/ArticleCard';
+12: 0 (diff: 0) | import articlesData from '@/data/articles.json';
+13: 0 (diff: 0) | 
+14: [Comment] 0
+15: [Comment] 0
+16: [Comment] 0
+17: 0 (diff: 0) | 
+18: [Comment] 0
+19: 0 (diff: 0) | const biospectraCover  = '/assets/biospectra.jpg';
+20: 0 (diff: 0) | const awardImg         = '/assets/award2.jpg';
+21: 0 (diff: 0) | const certificateImg   = '/assets/cerificate of indexing.jpg';
+22: 0 (diff: 0) | const msetLogo         = '/assets/mset-logo-png-removebg-preview.png';
+23: 0 (diff: 0) | const iccbLogo         = '/assets/iccb-logo-removebg-preview.png';
+24: 0 (diff: 0) | 
+25: [Comment] 0
+26: 0 (diff: 0) | const P = {
+27: 0 (diff: 0) | deepPurple:   '#2d0057',   // near-black purple — main dark tone
+28: 0 (diff: 0) | richPurple:   '#5a0096',   // book-cover left-gradient midpoint
+29: 0 (diff: 0) | vivid:        '#8b00cc',   // vivid purple
+30: 0 (diff: 0) | magenta:      '#be00be',   // magenta-purple from "BIOSPECTRA" lettering
+31: 0 (diff: 0) | white:        '#ffffff',
+32: 0 (diff: 0) | offWhite:     '#fdfcff',   // barely-tinted white
+33: 0 (diff: 0) | lavenderMist: '#f5eeff',   // section bg
+34: 0 (diff: 0) | lavenderSoft: '#ede0ff',   // card bg
+35: 0 (diff: 0) | borderSoft:   'rgba(139,0,204,0.1)',
+36: 0 (diff: 0) | textBody:     '#3d2a5a',
+37: 0 (diff: 0) | textMuted:    '#7c5da0',
+38: 0 (diff: 0) | };
+39: 0 (diff: 0) | 
+40: [Comment] 0
+41: 0 (diff: 0) | MAIN PAGE
+42: 0 (diff: 0) | ────────────────────────────────────────────────────────────────────────── */
+43: 0 (diff: 0) | const Home = () => {
+44: 0 (diff: 0) | const scrollContainerRef = useRef(null);
+45: 0 (diff: 0) | const [activeArea, setActiveArea] = useState(1);
+46: 0 (diff: 0) | 
+47: 0 (diff: 0) | const scroll = (direction) => {
+48: 0 (diff: 0) | if (scrollContainerRef.current) {
+49: 0 (diff: 0) | const amount = window.innerWidth < 768 ? 320 : 380;
+50: 0 (diff: 0) | scrollContainerRef.current.scrollBy({
+51: 0 (diff: 0) | left: direction === 'left' ? -amount : amount,
+52: 0 (diff: 0) | behavior: 'smooth',
+53: 0 (diff: 0) | });
+54: 0 (diff: 0) | }
+55: 0 (diff: 0) | };
+56: 0 (diff: 0) | 
+57: 0 (diff: 0) | return (
+58: 1 (diff: 1) | <div className="flex flex-col w-full">
+59: 1 (diff: 0) | 
+60: 1 (diff: 0) | {/* ══════════════════════════════════════════════════════════
+61: 1 (diff: 0) | HERO — Premium Digital Anthology (Layered Layout)
+62: 1 (diff: 0) | ══════════════════════════════════════════════════════════ */}
+63: 2 (diff: 1) | <section
+64: 2 (diff: 0) | className="relative min-h-screen w-full overflow-hidden flex flex-col lg:block noise-bg"
+65: 2 (diff: 0) | style={{ background: P.offWhite, fontFamily: 'var(--font-inter), sans-serif', paddingTop: 'var(--sat, 0px)' }}
+66: 2 (diff: 0) | >
+67: 2 (diff: 0) | {/* Background Decorative Layer */}
+68: 3 (diff: 1) | <div className="absolute inset-0 pointer-events-none overflow-hidden">
+69: 3 (diff: 0) | {/* Large soft glow behind content */}
+70: 4 (diff: 1) | <div
+71: 4 (diff: 0) | className="absolute top-[-10%] left-[-5%] w-[40%] h-[40%] rounded-full blur-[120px] opacity-20"
+72: 4 (diff: 0) | style={{ background: `radial-gradient(circle, ${P.magenta}, transparent)` }}
+73: 3 (diff: -1) | />
+74: 4 (diff: 1) | <div
+75: 4 (diff: 0) | className="absolute bottom-[0%] right-[-5%] w-[50%] h-[50%] rounded-full blur-[150px] opacity-10"
+76: 4 (diff: 0) | style={{ background: `radial-gradient(circle, ${P.richPurple}, transparent)` }}
+77: 3 (diff: -1) | />
+78: 3 (diff: 0) | 
+79: 3 (diff: 0) | {/* Floating Glass Shapes */}
+80: 4 (diff: 1) | <motion.div
+81: 4 (diff: 0) | animate={{ y: [0, -30, 0], rotate: [0, 5, 0] }}
+82: 4 (diff: 0) | transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+83: 4 (diff: 0) | className="absolute top-[15%] right-[10%] w-32 h-32 glass-premium rounded-3xl opacity-40 hidden xl:block"
+84: 3 (diff: -1) | />
+85: 4 (diff: 1) | <motion.div
+86: 4 (diff: 0) | animate={{ y: [0, 40, 0], rotate: [0, -8, 0] }}
+87: 4 (diff: 0) | transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+88: 4 (diff: 0) | className="absolute bottom-[20%] left-[5%] w-24 h-24 glass-premium rounded-full opacity-30 hidden xl:block"
+89: 3 (diff: -1) | />
+90: 2 (diff: -1) | </div>
+91: 2 (diff: 0) | 
+92: 2 (diff: 0) | {/* Top accent bar — magenta-to-purple */}
+93: 3 (diff: 1) | <div
+94: 3 (diff: 0) | className="absolute top-0 left-0 right-0 h-[3px] z-20"
+95: 3 (diff: 0) | style={{ background: `linear-gradient(90deg, ${P.deepPurple}, ${P.magenta}, ${P.vivid})` }}
+96: 2 (diff: -1) | />
+97: 2 (diff: 0) | 
+98: 2 (diff: 0) | {/* ── RESPONSIVE GRID ── */}
+99: 3 (diff: 1) | <div className="relative z-10 min-h-screen flex flex-col lg:grid lg:grid-cols-[1.1fr_1fr]">
+100: 3 (diff: 0) | 
+101: 3 (diff: 0) | {/* ────────────── CONTENT COLUMN ────────────── */}
+102: 4 (diff: 1) | <div
+103: 4 (diff: 0) | className="flex flex-col justify-center relative px-6 sm:px-12 lg:pl-[min(10vw,140px)] lg:pr-[min(5vw,70px)] pt-32 pb-12 lg:py-0"
+104: 4 (diff: 0) | >
+105: 4 (diff: 0) | {/* Journal Watermark */}
+106: 5 (diff: 1) | <div
+107: 5 (diff: 0) | className="absolute hidden xl:block select-none pointer-events-none"
+108: 5 (diff: 0) | style={{
+109: 5 (diff: 0) | left: 12,
+110: 5 (diff: 0) | top: '50%',
+111: 5 (diff: 0) | transform: 'translateY(-50%) rotate(180deg)',
+112: 5 (diff: 0) | writingMode: 'vertical-rl',
+113: 5 (diff: 0) | fontSize: 'clamp(80px, 10vw, 160px)',
+114: 5 (diff: 0) | fontWeight: 900,
+115: 5 (diff: 0) | color: `rgba(90,0,150,0.03)`,
+116: 5 (diff: 0) | letterSpacing: '0.14em',
+117: 5 (diff: 0) | textTransform: 'lowercase',
+118: 5 (diff: 0) | lineHeight: 1,
+119: 5 (diff: 0) | }}
+120: 5 (diff: 0) | >
+121: 5 (diff: 0) | mset
+122: 4 (diff: -1) | </div>
+123: 4 (diff: 0) | 
+124: 4 (diff: 0) | {/* Tag line with animated dash */}
+125: 5 (diff: 1) | <div className="flex items-center gap-4 mb-8 overflow-hidden">
+126: 6 (diff: 1) | <motion.div
+127: 6 (diff: 0) | initial={{ scaleX: 0 }}
+128: 6 (diff: 0) | animate={{ scaleX: 1 }}
+129: 6 (diff: 0) | transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+130: 6 (diff: 0) | style={{ height: 1, width: 48, background: P.magenta, transformOrigin: 'left' }}
+131: 5 (diff: -1) | />
+132: 6 (diff: 1) | <motion.span
+133: 6 (diff: 0) | initial={{ opacity: 0, x: -10 }}
+134: 6 (diff: 0) | animate={{ opacity: 1, x: 0 }}
+135: 6 (diff: 0) | transition={{ duration: 0.8, delay: 0.4 }}
+136: 6 (diff: 0) | style={{ fontSize: 'clamp(9px, 1.25vw, 11px)', letterSpacing: '0.3em', textTransform: 'uppercase', fontWeight: 800, color: P.magenta }}
+137: 6 (diff: 0) | >
+138: 6 (diff: 0) | Scientific Anthology 01/24
+139: 5 (diff: -1) | </motion.span>
+140: 4 (diff: -1) | </div>
+141: 4 (diff: 0) | 
+142: 4 (diff: 0) | {/* Main headline block */}
+143: 5 (diff: 1) | <div className="relative mb-8">
+144: 6 (diff: 1) | <div className="reveal-text">
+145: 7 (diff: 1) | <motion.h1
+146: 7 (diff: 0) | initial={{ y: '100%' }}
+147: 7 (diff: 0) | animate={{ y: 0 }}
+148: 7 (diff: 0) | transition={{ duration: 1.2, ease: [0.23, 1, 0.32, 1] }}
+149: 7 (diff: 0) | style={{
+150: 7 (diff: 0) | fontFamily: 'var(--font-crimson-pro), serif',
+151: 7 (diff: 0) | fontSize: 'clamp(48px, 9vw, 110px)',
+152: 7 (diff: 0) | fontWeight: 900,
+153: 7 (diff: 0) | color: '#000',
+154: 7 (diff: 0) | lineHeight: 0.9,
+155: 7 (diff: 0) | letterSpacing: '-0.03em',
+156: 7 (diff: 0) | margin: 0,
+157: 7 (diff: 0) | }}
+158: 7 (diff: 0) | >
+159: 7 (diff: 0) | BIOSPECTRA
+160: 6 (diff: -1) | </motion.h1>
+161: 5 (diff: -1) | </div>
+162: 5 (diff: 0) | 
+163: 5 (diff: 0) | {/* Overlapping Stroked Text */}
+164: 6 (diff: 1) | <motion.div
+165: 6 (diff: 0) | initial={{ opacity: 0, x: 20 }}
+166: 6 (diff: 0) | animate={{ opacity: 0.4, x: 0 }}
+167: 6 (diff: 0) | transition={{ duration: 1.5, delay: 0.5 }}
+168: 6 (diff: 0) | className="absolute -top-[15%] -right-[5%] text-stroke select-none pointer-events-none hidden md:block"
+169: 6 (diff: 0) | style={{
+170: 6 (diff: 0) | fontFamily: 'var(--font-crimson-pro), serif',
+171: 6 (diff: 0) | fontSize: 'clamp(60px, 11vw, 140px)',
+172: 6 (diff: 0) | fontWeight: 900,
+173: 6 (diff: 0) | zIndex: -1,
+174: 6 (diff: 0) | }}
+175: 6 (diff: 0) | >
+176: 6 (diff: 0) | JOURNAL
+177: 5 (diff: -1) | </motion.div>
+178: 5 (diff: 0) | 
+179: 5 (diff: 0) | {/* Sub-headline */}
+180: 6 (diff: 1) | <motion.div
+181: 6 (diff: 0) | initial={{ opacity: 0, y: 10 }}
+182: 6 (diff: 0) | animate={{ opacity: 1, y: 0 }}
+183: 6 (diff: 0) | transition={{ duration: 0.8, delay: 0.8 }}
+184: 6 (diff: 0) | style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 24 }}
+185: 6 (diff: 0) | >
+186: 7 (diff: 1) | <span
+187: 7 (diff: 0) | style={{
+188: 7 (diff: 0) | fontFamily: 'var(--font-crimson-pro), serif',
+189: 7 (diff: 0) | fontSize: 'clamp(16px, 2.5vw, 32px)',
+190: 7 (diff: 0) | fontWeight: 500,
+191: 7 (diff: 0) | color: P.richPurple,
+192: 7 (diff: 0) | letterSpacing: '0.05em',
+193: 7 (diff: 0) | fontStyle: 'italic',
+194: 7 (diff: 0) | }}
+195: 7 (diff: 0) | >
+196: 7 (diff: 0) | Advancing the Frontiers of Life Sciences
+197: 6 (diff: -1) | </span>
+198: 5 (diff: -1) | </motion.div>
+199: 4 (diff: -1) | </div>
+200: 4 (diff: 0) | 
+201: 4 (diff: 0) | {/* Description */}
+202: 5 (diff: 1) | <motion.p
+203: 5 (diff: 0) | initial={{ opacity: 0 }}
+204: 5 (diff: 0) | animate={{ opacity: 0.8 }}
+205: 5 (diff: 0) | transition={{ duration: 1, delay: 1 }}
+206: 5 (diff: 0) | style={{
+207: 5 (diff: 0) | fontSize: 'clamp(13px, 1.6vw, 15px)',
+208: 5 (diff: 0) | color: P.textBody,
+209: 5 (diff: 0) | lineHeight: 1.8,
+210: 5 (diff: 0) | maxWidth: 480,
+211: 5 (diff: 0) | marginBottom: 48,
+212: 5 (diff: 0) | }}
+213: 5 (diff: 0) | >
+214: 5 (diff: 0) | An International Biannual Refereed Journal (ISSN: 0973-7057).
+215: 5 (diff: 0) | A prestigious forum for biological excellence, published under
+216: 5 (diff: 0) | the stewardship of MSET since 2006.
+217: 4 (diff: -1) | </motion.p>
+218: 4 (diff: 0) | 
+219: 4 (diff: 0) | {/* CTA buttons with magnetic effect simulation */}
+220: 5 (diff: 1) | <motion.div
+221: 5 (diff: 0) | initial={{ opacity: 0, y: 20 }}
+222: 5 (diff: 0) | animate={{ opacity: 1, y: 0 }}
+223: 5 (diff: 0) | transition={{ duration: 0.8, delay: 1.2 }}
+224: 5 (diff: 0) | className="flex flex-col sm:flex-row gap-5 mb-16"
+225: 5 (diff: 0) | >
+226: 6 (diff: 1) | <Link href="/archive" className="relative group">
+227: 7 (diff: 1) | <motion.button
+228: 7 (diff: 0) | whileHover={{ scale: 1.02 }}
+229: 7 (diff: 0) | whileTap={{ scale: 0.98 }}
+230: 7 (diff: 0) | className="px-10 py-5 bg-black text-white text-[10px] font-bold tracking-[0.25em] uppercase flex items-center justify-center gap-4 transition-all duration-300 group-hover:bg-[#2d0057] shadow-2xl shadow-black/10"
+231: 7 (diff: 0) | >
+232: 7 (diff: 0) | Explore Archive <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+233: 6 (diff: -1) | </motion.button>
+234: 5 (diff: -1) | </Link>
+235: 5 (diff: 0) | 
+236: 6 (diff: 1) | <Link href="/submit">
+237: 7 (diff: 1) | <motion.button
+238: 7 (diff: 0) | whileHover={{ backgroundColor: P.richPurple, color: '#fff' }}
+239: 7 (diff: 0) | className="px-10 py-5 border-[1.5px] border-black/10 text-[10px] font-bold tracking-[0.2em] uppercase text-black transition-all duration-300"
+240: 7 (diff: 0) | >
+241: 7 (diff: 0) | Submit Paper
+242: 6 (diff: -1) | </motion.button>
+243: 5 (diff: -1) | </Link>
+244: 4 (diff: -1) | </motion.div>
+245: 4 (diff: 0) | 
+246: 4 (diff: 0) | {/* Premium Stat Row */}
+247: 5 (diff: 1) | <div className="grid grid-cols-2 md:grid-cols-3 gap-8 pt-8 border-t border-black/5">
+248: 6 (diff: 1) | <motion.div
+249: 6 (diff: 0) | initial={{ opacity: 0, y: 10 }}
+250: 6 (diff: 0) | animate={{ opacity: 1, y: 0 }}
+251: 6 (diff: 0) | transition={{ duration: 0.6, delay: 1.4 }}
+252: 6 (diff: 0) | >
+253: 6 (diff: 0) | <div className="text-[10px] uppercase tracking-widest text-black/40 font-bold mb-2">Impact Factor</div>
+254: 6 (diff: 0) | <div className="text-3xl font-black text-black">8.546</div>
+255: 5 (diff: -1) | </motion.div>
+256: 6 (diff: 1) | <motion.div
+257: 6 (diff: 0) | initial={{ opacity: 0, y: 10 }}
+258: 6 (diff: 0) | animate={{ opacity: 1, y: 0 }}
+259: 6 (diff: 0) | transition={{ duration: 0.6, delay: 1.5 }}
+260: 6 (diff: 0) | >
+261: 6 (diff: 0) | <div className="text-[10px] uppercase tracking-widest text-black/40 font-bold mb-2">Issue Status</div>
+262: 6 (diff: 0) | <div className="text-3xl font-black text-magenta">Vol. 17</div>
+263: 5 (diff: -1) | </motion.div>
+264: 4 (diff: -1) | </div>
+265: 3 (diff: -1) | </div>
+266: 3 (diff: 0) | 
+267: 3 (diff: 0) | {/* ────────────── VISUAL COLUMN ────────────── */}
+268: 4 (diff: 1) | <div
+269: 4 (diff: 0) | className="relative flex items-center justify-center lg:min-h-screen py-24 lg:py-0 overflow-hidden"
+270: 4 (diff: 0) | >
+271: 4 (diff: 0) | {/* Dynamic Background */}
+272: 5 (diff: 1) | <div className="absolute inset-0 z-0">
+273: 5 (diff: 0) | <div className="absolute inset-0 bg-gradient-to-br from-[#2d0057] via-[#5a0096] to-[#be00be]" />
+274: 5 (diff: 0) | <div className="absolute inset-0 bg-black/10" />
+275: 5 (diff: 0) | <div className="absolute inset-0 mix-blend-overlay opacity-30" style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, white, transparent)' }} />
+276: 4 (diff: -1) | </div>
+277: 4 (diff: 0) | 
+278: 4 (diff: 0) | {/* Centered Journal presentation */}
+279: 5 (diff: 1) | <motion.div
+280: 5 (diff: 0) | style={{ perspective: 1000 }}
+281: 5 (diff: 0) | className="relative z-10 w-full max-w-[320px] sm:max-w-[420px] xl:max-w-[480px] p-8"
+282: 5 (diff: 0) | >
+283: 6 (diff: 1) | <motion.div
+284: 6 (diff: 0) | initial={{ opacity: 0, rotateY: 20, rotateX: 10, scale: 0.9 }}
+285: 6 (diff: 0) | animate={{ opacity: 1, rotateY: 0, rotateX: 0, scale: 1 }}
+286: 6 (diff: 0) | transition={{ duration: 1.8, ease: [0.23, 1, 0.32, 1], delay: 0.5 }}
+287: 6 (diff: 0) | whileHover={{ rotateY: -8, rotateX: 5, scale: 1.02 }}
+288: 6 (diff: 0) | className="relative group cursor-pointer"
+289: 6 (diff: 0) | >
+290: 6 (diff: 0) | {/* Book Shadow */}
+291: 6 (diff: 0) | <div className="absolute -inset-10 bg-black/40 blur-[50px] rounded-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+292: 6 (diff: 0) | 
+293: 6 (diff: 0) | {/* The Book */}
+294: 7 (diff: 1) | <div className="relative bg-white p-3 sm:p-4 shadow-[20px_40px_80px_-15px_rgba(0,0,0,0.5)] border border-white/20">
+295: 8 (diff: 1) | <Image
+296: 8 (diff: 0) | src={biospectraCover}
+297: 8 (diff: 0) | alt="Biospectra Journal Cover"
+298: 8 (diff: 0) | width={600}
+299: 8 (diff: 0) | height={800}
+300: 8 (diff: 0) | className="w-full h-auto block"
+301: 8 (diff: 0) | priority
+302: 7 (diff: -1) | />
+303: 7 (diff: 0) | {/* Glass sheen overlay */}
+304: 7 (diff: 0) | <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-white/5 pointer-events-none" />
+305: 6 (diff: -1) | </div>
+306: 6 (diff: 0) | 
+307: 6 (diff: 0) | {/* Vertical Edition Label */}
+308: 7 (diff: 1) | <div
+309: 7 (diff: 0) | className="absolute -right-4 top-1/2 -translate-y-1/2 glass-premium py-6 px-3 flex flex-col items-center gap-4 z-20"
+310: 7 (diff: 0) | >
+311: 7 (diff: 0) | <span className="[writing-mode:vertical-rl] rotate-180 text-[9px] font-black tracking-widest text-[#2d0057] uppercase">2024 Edition</span>
+312: 7 (diff: 0) | <div className="w-[1px] h-12 bg-[#2d0057]/20" />
+313: 7 (diff: 0) | <span className="text-sm font-black text-magenta">17/2</span>
+314: 6 (diff: -1) | </div>
+315: 5 (diff: -1) | </motion.div>
+316: 4 (diff: -1) | </motion.div>
+317: 4 (diff: 0) | 
+318: 4 (diff: 0) | {/* ISSN floating badge */}
+319: 5 (diff: 1) | <motion.div
+320: 5 (diff: 0) | initial={{ opacity: 0, x: 20 }}
+321: 5 (diff: 0) | animate={{ opacity: 1, x: 0 }}
+322: 5 (diff: 0) | transition={{ delay: 1.5, duration: 1 }}
+323: 5 (diff: 0) | className="absolute bottom-10 right-10 glass-premium px-6 py-4 flex flex-col gap-1 z-30"
+324: 5 (diff: 0) | >
+325: 5 (diff: 0) | <span className="text-[7px] font-black tracking-[0.3em] uppercase opacity-50">Scientific Index</span>
+326: 5 (diff: 0) | <span className="text-xs font-black tracking-wider text-black">ISSN 0973 – 7057</span>
+327: 4 (diff: -1) | </motion.div>
+328: 4 (diff: 0) | 
+329: 4 (diff: 0) | {/* Abstract floating particles (circles) */}
+330: 4 (diff: 0) | {[...Array(6)].map((_, i) => (
+331: 5 (diff: 1) | <motion.div
+332: 5 (diff: 0) | key={i}
+333: 5 (diff: 0) | initial={{ opacity: 0 }}
+334: 5 (diff: 0) | animate={{
+335: 5 (diff: 0) | opacity: [0.1, 0.4, 0.1],
+336: 5 (diff: 0) | x: [0, Math.random() * 40 - 20, 0],
+337: 5 (diff: 0) | y: [0, Math.random() * 40 - 20, 0]
+338: 5 (diff: 0) | }}
+339: 5 (diff: 0) | transition={{ duration: 4 + Math.random() * 4, repeat: Infinity, delay: Math.random() * 2 }}
+340: 5 (diff: 0) | className="absolute w-2 h-2 rounded-full bg-white hidden lg:block"
+341: 5 (diff: 0) | style={{
+342: 5 (diff: 0) | top: `${Math.random() * 100}%`,
+343: 5 (diff: 0) | left: `${Math.random() * 100}%`,
+344: 5 (diff: 0) | }}
+345: 4 (diff: -1) | />
+346: 4 (diff: 0) | ))}
+347: 3 (diff: -1) | </div>
+348: 2 (diff: -1) | </div>
+349: 1 (diff: -1) | </section>
+350: 1 (diff: 0) | 
+351: 1 (diff: 0) | 
+352: 1 (diff: 0) | {/* ══════════════════════════════════════════════════════════
+353: 1 (diff: 0) | GOVERNING BODIES — Modern Bento Grid
+354: 1 (diff: 0) | ══════════════════════════════════════════════════════════ */}
+355: 2 (diff: 1) | <section className="relative py-24 lg:py-32 bg-[#fdfcff] overflow-hidden noise-bg">
+356: 2 (diff: 0) | {/* Background Accents */}
+357: 2 (diff: 0) | <div className="absolute top-0 right-0 w-1/3 h-full bg-purple-50/50 -skew-x-12 translate-x-1/2 pointer-events-none" />
+358: 2 (diff: 0) | 
+359: 3 (diff: 1) | <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
+360: 4 (diff: 1) | <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+361: 4 (diff: 0) | 
+362: 4 (diff: 0) | {/* Header / Intro Bento Cell */}
+363: 5 (diff: 1) | <motion.div
+364: 5 (diff: 0) | initial={{ opacity: 0, y: 20 }}
+365: 5 (diff: 0) | whileInView={{ opacity: 1, y: 0 }}
+366: 5 (diff: 0) | viewport={{ once: true }}
+367: 5 (diff: 0) | className="lg:col-span-12 xl:col-span-4 glass-premium p-10 lg:p-14 flex flex-col justify-center"
+368: 5 (diff: 0) | >
+369: 6 (diff: 1) | <div className="flex items-center gap-4 mb-8">
+370: 6 (diff: 0) | <div className="w-12 h-[1px] bg-magenta" />
+371: 6 (diff: 0) | <span className="text-[10px] font-black tracking-[0.3em] uppercase text-magenta">Foundation</span>
+372: 5 (diff: -1) | </div>
+373: 6 (diff: 1) | <h2 className="text-4xl lg:text-5xl font-black text-black leading-tight mb-8">
+374: 6 (diff: 0) | Our Editorial <br />
+375: 6 (diff: 0) | <span className="text-stroke-sm" style={{ WebkitTextStroke: '1px #2d0057', color: 'transparent' }}>Stewardship</span>
+376: 5 (diff: -1) | </h2>
+377: 6 (diff: 1) | <p className="text-sm lg:text-base text-black/60 leading-relaxed mb-10">
+378: 6 (diff: 0) | Biospectra is officially published under the stewardship of these distinguished academic organizations, ensuring the highest standards of scientific merit and research integrity locally and globally.
+379: 5 (diff: -1) | </p>
+380: 6 (diff: 1) | <div className="mt-auto">
+381: 7 (diff: 1) | <div className="flex -space-x-4">
+382: 7 (diff: 0) | {[1, 2, 3, 4].map(idx => (
+383: 8 (diff: 1) | <div key={idx} className="w-10 h-10 rounded-full border-2 border-white bg-purple-100 flex items-center justify-center text-[10px] font-bold text-rich-purple">
+384: 8 (diff: 0) | {idx === 4 ? '+50' : <div className="w-full h-full rounded-full bg-gradient-to-br from-rich-purple to-magenta opacity-20" />}
+385: 7 (diff: -1) | </div>
+386: 7 (diff: 0) | ))}
+387: 6 (diff: -1) | </div>
+388: 6 (diff: 0) | <div className="text-[10px] font-bold text-black/40 uppercase tracking-widest mt-4">Consulted by Global Experts</div>
+389: 5 (diff: -1) | </div>
+390: 4 (diff: -1) | </motion.div>
+391: 4 (diff: 0) | 
+392: 4 (diff: 0) | {/* MSET Card */}
+393: 5 (diff: 1) | <motion.div
+394: 5 (diff: 0) | initial={{ opacity: 0, x: 20 }}
+395: 5 (diff: 0) | whileInView={{ opacity: 1, x: 0 }}
+396: 5 (diff: 0) | viewport={{ once: true }}
+397: 5 (diff: 0) | transition={{ delay: 0.2 }}
+398: 5 (diff: 0) | className="lg:col-span-6 xl:col-span-4 group relative overflow-hidden bg-white border border-black/5 p-10 lg:p-14 flex flex-col items-center text-center hover:shadow-[0_30px_60px_-15px_rgba(90,0,150,0.15)] transition-all duration-700"
+399: 5 (diff: 0) | >
+400: 5 (diff: 0) | <div className="absolute top-0 left-0 w-1 h-0 bg-magenta group-hover:h-full transition-all duration-700" />
+401: 5 (diff: 0) | 
+402: 6 (diff: 1) | <div className="w-24 h-24 mb-10 relative">
+403: 6 (diff: 0) | <Image src={msetLogo} alt="MSET" fill className="object-contain grayscale group-hover:grayscale-0 transition-all duration-500 scale-90 group-hover:scale-100" />
+404: 5 (diff: -1) | </div>
+405: 5 (diff: 0) | 
+406: 5 (diff: 0) | <span className="text-[10px] font-black tracking-[0.4em] uppercase text-magenta mb-4">MSET TRUST</span>
+407: 6 (diff: 1) | <h3 className="text-2xl font-black text-black mb-6 leading-tight">
+408: 6 (diff: 0) | Madhawi Shyam <br /> Educational Trust
+409: 5 (diff: -1) | </h3>
+410: 6 (diff: 1) | <p className="text-sm text-black/60 leading-relaxed max-w-[280px]">
+411: 6 (diff: 0) | A dedicated foundation committed to advancing higher education and scientific research across biological sciences.
+412: 5 (diff: -1) | </p>
+413: 5 (diff: 0) | 
+414: 6 (diff: 1) | <div className="mt-10 pt-10 border-t border-black/5 w-full">
+415: 6 (diff: 0) | <span className="text-[9px] font-bold text-black/30 tracking-widest uppercase italic">Established 2005</span>
+416: 5 (diff: -1) | </div>
+417: 4 (diff: -1) | </motion.div>
+418: 4 (diff: 0) | 
+419: 4 (diff: 0) | {/* ICCB Card */}
+420: 5 (diff: 1) | <motion.div
+421: 5 (diff: 0) | initial={{ opacity: 0, x: 20 }}
+422: 5 (diff: 0) | whileInView={{ opacity: 1, x: 0 }}
+423: 5 (diff: 0) | viewport={{ once: true }}
+424: 5 (diff: 0) | transition={{ delay: 0.4 }}
+425: 5 (diff: 0) | className="lg:col-span-6 xl:col-span-4 group relative overflow-hidden bg-[#2d0057] p-10 lg:p-14 flex flex-col items-center text-center text-white"
+426: 5 (diff: 0) | >
+427: 5 (diff: 0) | <div className="absolute top-0 right-0 w-32 h-32 bg-magenta/20 blur-[60px] rounded-full translate-x-1/2 -translate-y-1/2" />
+428: 5 (diff: 0) | 
+429: 6 (diff: 1) | <div className="w-24 h-24 mb-10 relative z-10">
+430: 6 (diff: 0) | <Image src={iccbLogo} alt="ICCB" fill className="object-contain brightness-0 invert opacity-80 group-hover:opacity-100 transition-all duration-500 scale-90 group-hover:scale-100" />
+431: 5 (diff: -1) | </div>
+432: 5 (diff: 0) | 
+433: 5 (diff: 0) | <span className="text-[10px] font-black tracking-[0.4em] uppercase text-magenta mb-4">CONSORTIUM</span>
+434: 6 (diff: 1) | <h3 className="text-2xl font-black leading-tight mb-6">
+435: 6 (diff: 0) | International Consortium of <br /> Contemporary Biologists
+436: 5 (diff: -1) | </h3>
+437: 6 (diff: 1) | <p className="text-sm text-white/60 leading-relaxed max-w-[280px]">
+438: 6 (diff: 0) | An international fellowship of scientists and researchers fostering global collaboration and innovation in modern biology.
+439: 5 (diff: -1) | </p>
+440: 5 (diff: 0) | 
+441: 6 (diff: 1) | <div className="mt-10 pt-10 border-t border-white/5 w-full">
+442: 7 (diff: 1) | <div className="flex items-center justify-center gap-2">
+443: 7 (diff: 0) | <div className="w-1.5 h-1.5 rounded-full bg-magenta animate-pulse" />
+444: 7 (diff: 0) | <span className="text-[9px] font-bold text-white/40 tracking-widest uppercase">Global Collaboration Active</span>
+445: 6 (diff: -1) | </div>
+446: 5 (diff: -1) | </div>
+447: 4 (diff: -1) | </motion.div>
+448: 4 (diff: 0) | 
+449: 3 (diff: -1) | </div>
+450: 2 (diff: -1) | </div>
+451: 1 (diff: -1) | </section>
+452: 1 (diff: 0) | 
+453: 1 (diff: 0) | 
+454: 1 (diff: 0) | {/* ══════════════════════════════════════════════════════════
+455: 1 (diff: 0) | LATEST ARTICLES
+456: 1 (diff: 0) | ══════════════════════════════════════════════════════════ */}
+457: 1 (diff: 0) | {/* ══════════════════════════════════════════════════════════
+458: 1 (diff: 0) | LATEST ARTICLES — The Scientific Ledger
+459: 1 (diff: 0) | ══════════════════════════════════════════════════════════ */}
+460: 2 (diff: 1) | <section className="relative py-24 lg:py-32 bg-white overflow-hidden">
+461: 3 (diff: 1) | <div className="relative z-10 max-w-[1600px] mx-auto px-6 lg:px-12">
+462: 3 (diff: 0) | 
+463: 3 (diff: 0) | {/* Header Row */}
+464: 4 (diff: 1) | <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-16 lg:mb-24 gap-12">
+465: 5 (diff: 1) | <div className="max-w-3xl">
+466: 6 (diff: 1) | <motion.div
+467: 6 (diff: 0) | initial={{ opacity: 0, x: -20 }}
+468: 6 (diff: 0) | whileInView={{ opacity: 1, x: 0 }}
+469: 6 (diff: 0) | viewport={{ once: true }}
+470: 6 (diff: 0) | className="flex items-center gap-4 mb-6"
+471: 6 (diff: 0) | >
+472: 6 (diff: 0) | <div className="w-12 h-[1px] bg-rich-purple" />
+473: 6 (diff: 0) | <span className="text-[10px] font-black tracking-[0.3em] uppercase text-magenta">Recent Publications</span>
+474: 5 (diff: -1) | </motion.div>
+475: 6 (diff: 1) | <h2 className="font-serif text-5xl lg:text-7xl font-black text-black leading-none mb-8" style={{ fontFamily: 'var(--font-crimson-pro), serif' }}>
+476: 6 (diff: 0) | The Scientific <br />
+477: 6 (diff: 0) | <span className="text-stroke-sm" style={{ WebkitTextStroke: '1px #2d0057', color: 'transparent' }}>Ledger</span>
+478: 5 (diff: -1) | </h2>
+479: 6 (diff: 1) | <p className="text-base lg:text-lg text-black/60 leading-relaxed max-w-xl">
+480: 6 (diff: 0) | Explore the latest breakthroughs in interdisciplinary life sciences, vetted through our rigorous double-blind peer review process.
+481: 5 (diff: -1) | </p>
+482: 4 (diff: -1) | </div>
+483: 4 (diff: 0) | 
+484: 5 (diff: 1) | <Link href="/archive">
+485: 6 (diff: 1) | <motion.button
+486: 6 (diff: 0) | whileHover={{ scale: 1.05 }}
+487: 6 (diff: 0) | whileTap={{ scale: 0.95 }}
+488: 6 (diff: 0) | className="px-8 py-4 border border-black/10 text-[10px] font-bold tracking-[0.2em] uppercase text-black hover:bg-black hover:text-white transition-all duration-300"
+489: 6 (diff: 0) | >
+490: 6 (diff: 0) | View Full Archive
+491: 5 (diff: -1) | </motion.button>
+492: 4 (diff: -1) | </Link>
+493: 3 (diff: -1) | </div>
+494: 3 (diff: 0) | 
+495: 3 (diff: 0) | {/* Carousel with Magnetic Controls */}
+496: 4 (diff: 1) | <div className="relative group/carousel">
+497: 4 (diff: 0) | {/* Custom Navigation */}
+498: 5 (diff: 1) | <div className="absolute -top-32 right-0 hidden lg:flex items-center gap-4">
+499: 6 (diff: 1) | <motion.button
+500: 6 (diff: 0) | whileHover={{ scale: 1.1, backgroundColor: '#2d0057', color: '#fff' }}
+501: 6 (diff: 0) | whileTap={{ scale: 0.9 }}
+502: 6 (diff: 0) | onClick={() => scroll('left')}
+503: 6 (diff: 0) | className="w-14 h-14 rounded-full border border-black/10 flex items-center justify-center text-black transition-colors"
+504: 6 (diff: 0) | >
+505: 6 (diff: 0) | <ChevronLeft size={24} />
+506: 5 (diff: -1) | </motion.button>
+507: 6 (diff: 1) | <motion.button
+508: 6 (diff: 0) | whileHover={{ scale: 1.1, backgroundColor: '#2d0057', color: '#fff' }}
+509: 6 (diff: 0) | whileTap={{ scale: 0.9 }}
+510: 6 (diff: 0) | onClick={() => scroll('right')}
+511: 6 (diff: 0) | className="w-14 h-14 rounded-full border border-black/10 flex items-center justify-center text-black transition-colors"
+512: 6 (diff: 0) | >
+513: 6 (diff: 0) | <ChevronRight size={24} />
+514: 5 (diff: -1) | </motion.button>
+515: 4 (diff: -1) | </div>
+516: 4 (diff: 0) | 
+517: 5 (diff: 1) | <div
+518: 5 (diff: 0) | ref={scrollContainerRef}
+519: 5 (diff: 0) | className="flex items-stretch gap-6 lg:gap-8 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-16 px-1"
+520: 5 (diff: 0) | >
+521: 5 (diff: 0) | {articlesData.map((article) => (
+522: 6 (diff: 1) | <div key={article.id} className="snap-start shrink-0 w-[85vw] sm:w-[450px] lg:w-[500px]">
+523: 6 (diff: 0) | <ArticleCard article={article} />
+524: 5 (diff: -1) | </div>
+525: 5 (diff: 0) | ))}
+526: 4 (diff: -1) | </div>
+527: 3 (diff: -1) | </div>
+528: 3 (diff: 0) | 
+529: 3 (diff: 0) | {/* Contribute Banner — Elevated Glass */}
+530: 4 (diff: 1) | <motion.div
+531: 4 (diff: 0) | initial={{ opacity: 0, y: 30 }}
+532: 4 (diff: 0) | whileInView={{ opacity: 1, y: 0 }}
+533: 4 (diff: 0) | viewport={{ once: true }}
+534: 4 (diff: 0) | className="mt-12 p-8 lg:p-16 glass-premium border-magenta/10 relative overflow-hidden group"
+535: 4 (diff: 0) | >
+536: 4 (diff: 0) | <div className="absolute top-0 right-0 w-64 h-64 bg-magenta/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-magenta/10 transition-colors duration-700" />
+537: 4 (diff: 0) | 
+538: 5 (diff: 1) | <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
+539: 6 (diff: 1) | <div className="flex flex-col lg:flex-row items-center gap-8 text-center lg:text-left">
+540: 7 (diff: 1) | <div className="w-20 h-20 rounded-2xl bg-white shadow-xl flex items-center justify-center text-magenta border border-magenta/5">
+541: 7 (diff: 0) | <BookOpen size={32} />
+542: 6 (diff: -1) | </div>
+543: 7 (diff: 1) | <div>
+544: 8 (diff: 1) | <h4 className="font-serif text-3xl font-black text-black mb-3" style={{ fontFamily: 'var(--font-crimson-pro), serif' }}>
+545: 8 (diff: 0) | Contribute Your Research
+546: 7 (diff: -1) | </h4>
+547: 8 (diff: 1) | <p className="text-black/60 max-w-lg leading-relaxed">
+548: 8 (diff: 0) | We invite original research papers and review articles from scholars worldwide. Join our international community of biological excellence.
+549: 7 (diff: -1) | </p>
+550: 6 (diff: -1) | </div>
+551: 5 (diff: -1) | </div>
+552: 5 (diff: 0) | 
+553: 6 (diff: 1) | <Link href="/submit" className="w-full lg:w-auto">
+554: 7 (diff: 1) | <motion.button
+555: 7 (diff: 0) | whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(186, 0, 186, 0.2)' }}
+556: 7 (diff: 0) | whileTap={{ scale: 0.95 }}
+557: 7 (diff: 0) | className="w-full lg:w-auto px-12 py-5 bg-magenta text-white text-[10px] font-black tracking-[0.25em] uppercase shadow-xl shadow-magenta/10"
+558: 7 (diff: 0) | >
+559: 7 (diff: 0) | Submit Manuscript
+560: 6 (diff: -1) | </motion.button>
+561: 5 (diff: -1) | </Link>
+562: 4 (diff: -1) | </div>
+563: 3 (diff: -1) | </motion.div>
+564: 2 (diff: -1) | </div>
+565: 1 (diff: -1) | </section>
+566: 1 (diff: 0) | {/* ══════════════════════════════════════════════════════════
+567: 1 (diff: 0) | EDITORIAL HIGHLIGHTS — Academic Rigor
+568: 1 (diff: 0) | ══════════════════════════════════════════════════════════ */}
+569: 2 (diff: 1) | <section className="relative py-24 lg:py-32 bg-[#fdfcff] overflow-hidden noise-bg">
+570: 3 (diff: 1) | <div className="relative z-10 max-w-[1600px] mx-auto px-6 lg:px-12">
+571: 4 (diff: 1) | <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+572: 4 (diff: 0) | 
+573: 4 (diff: 0) | {/* Visual Mosaic */}
+574: 5 (diff: 1) | <div className="relative aspect-[4/5] lg:aspect-square w-full max-w-2xl mx-auto order-2 lg:order-1">
+575: 5 (diff: 0) | {/* Background architectural elements */}
+576: 5 (diff: 0) | <div className="absolute top-0 right-0 w-[80%] h-[80%] border border-black/5 -translate-y-4 translate-x-4" />
+577: 5 (diff: 0) | <div className="absolute bottom-0 left-0 w-[80%] h-[80%] border border-black/5 translate-y-4 -translate-x-4" />
+578: 5 (diff: 0) | 
+579: 6 (diff: 1) | <motion.div
+580: 6 (diff: 0) | initial={{ opacity: 0, x: -40 }}
+581: 6 (diff: 0) | whileInView={{ opacity: 1, x: 0 }}
+582: 6 (diff: 0) | viewport={{ once: true }}
+583: 6 (diff: 0) | transition={{ duration: 1.2 }}
+584: 6 (diff: 0) | className="absolute top-[10%] left-0 w-[70%] z-20 shadow-2xl"
+585: 6 (diff: 0) | >
+586: 7 (diff: 1) | <div className="bg-white p-3 shadow-2xl">
+587: 7 (diff: 0) | <Image src={awardImg} alt="Recognition" width={500} height={350} className="w-full h-auto" />
+588: 6 (diff: -1) | </div>
+589: 5 (diff: -1) | </motion.div>
+590: 5 (diff: 0) | 
+591: 6 (diff: 1) | <motion.div
+592: 6 (diff: 0) | initial={{ opacity: 0, scale: 0.9, y: 40 }}
+593: 6 (diff: 0) | whileInView={{ opacity: 1, scale: 1, y: 0 }}
+594: 6 (diff: 0) | viewport={{ once: true }}
+595: 6 (diff: 0) | transition={{ duration: 1.2, delay: 0.3 }}
+596: 6 (diff: 0) | className="absolute bottom-0 right-0 w-[65%] z-30 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)]"
+597: 6 (diff: 0) | >
+598: 7 (diff: 1) | <div className="bg-white p-4">
+599: 7 (diff: 0) | <Image src={biospectraCover} alt="Biospectra" width={400} height={550} className="w-full h-auto" />
+600: 6 (diff: -1) | </div>
+601: 5 (diff: -1) | </motion.div>
+602: 5 (diff: 0) | 
+603: 5 (diff: 0) | {/* Floating Element */}
+604: 6 (diff: 1) | <motion.div
+605: 6 (diff: 0) | animate={{ y: [0, -20, 0] }}
+606: 6 (diff: 0) | transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+607: 6 (diff: 0) | className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 glass-premium rounded-full flex items-center justify-center z-10 hidden xl:flex"
+608: 6 (diff: 0) | >
+609: 7 (diff: 1) | <div className="text-center">
+610: 7 (diff: 0) | <div className="text-2xl font-black text-black leading-none">EST.</div>
+611: 7 (diff: 0) | <div className="text-xs font-bold text-magenta tracking-widest uppercase">2006</div>
+612: 6 (diff: -1) | </div>
+613: 5 (diff: -1) | </motion.div>
+614: 4 (diff: -1) | </div>
+615: 4 (diff: 0) | 
+616: 4 (diff: 0) | {/* Content Box */}
+617: 5 (diff: 1) | <div className="order-1 lg:order-2">
+618: 6 (diff: 1) | <motion.div
+619: 6 (diff: 0) | initial={{ opacity: 0, x: 20 }}
+620: 6 (diff: 0) | whileInView={{ opacity: 1, x: 0 }}
+621: 6 (diff: 0) | viewport={{ once: true }}
+622: 6 (diff: 0) | >
+623: 7 (diff: 1) | <div className="flex items-center gap-4 mb-8">
+624: 7 (diff: 0) | <div className="w-12 h-[1px] bg-rich-purple" />
+625: 7 (diff: 0) | <span className="text-[10px] font-black tracking-[0.3em] uppercase text-magenta">Academic Rigor</span>
+626: 6 (diff: -1) | </div>
+627: 7 (diff: 1) | <h2 className="font-serif text-5xl lg:text-7xl font-black text-black leading-tight mb-10" style={{ fontFamily: 'var(--font-crimson-pro), serif' }}>
+628: 7 (diff: 0) | Guided by <br />
+629: 7 (diff: 0) | <span className="text-stroke-sm" style={{ WebkitTextStroke: '1px #2d0057', color: 'transparent' }}>Integrity</span>
+630: 6 (diff: -1) | </h2>
+631: 7 (diff: 1) | <p className="text-lg text-black/60 leading-relaxed mb-12 max-w-xl">
+632: 7 (diff: 0) | Our journal is steered by a distinguished editorial board comprising leading scientists from premier global institutions, ensuring every paper meets the highest standards of scientific integrity and innovation.
+633: 6 (diff: -1) | </p>
+634: 6 (diff: 0) | 
+635: 7 (diff: 1) | <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+636: 7 (diff: 0) | {[
+637: 7 (diff: 0) | { title: "Double-Blind Peer Review", desc: "Highest standard of academic vetting." },
+638: 7 (diff: 0) | { title: "Interdisciplinary Scope", desc: "Covering the full spectrum of biology." },
+639: 7 (diff: 0) | { title: "Global Indexing", desc: "Recognized by leading citations journals." },
+640: 7 (diff: 0) | { title: "Open Access Options", desc: "Democratizing scientific knowledge." }
+641: 7 (diff: 0) | ].map((feat, i) => (
+642: 8 (diff: 1) | <motion.div
+643: 8 (diff: 0) | key={feat.title}
+644: 8 (diff: 0) | initial={{ opacity: 0, y: 10 }}
+645: 8 (diff: 0) | whileInView={{ opacity: 1, y: 0 }}
+646: 8 (diff: 0) | transition={{ delay: i * 0.1 }}
+647: 8 (diff: 0) | className="p-6 border border-black/5 bg-white hover:border-magenta/20 transition-all group"
+648: 8 (diff: 0) | >
+649: 8 (diff: 0) | <h4 className="font-bold text-black mb-2 group-hover:text-magenta transition-colors">{feat.title}</h4>
+650: 8 (diff: 0) | <p className="text-[11px] text-black/40 uppercase tracking-widest font-bold">{feat.desc}</p>
+651: 7 (diff: -1) | </motion.div>
+652: 7 (diff: 0) | ))}
+653: 6 (diff: -1) | </div>
+654: 5 (diff: -1) | </motion.div>
+655: 4 (diff: -1) | </div>
+656: 3 (diff: -1) | </div>
+657: 2 (diff: -1) | </div>
+658: 1 (diff: -1) | </section>
+659: 1 (diff: 0) | 
+660: 1 (diff: 0) | {/* ══════════════════════════════════════════════════════════
+661: 1 (diff: 0) | RECOGNITION — Global Impact Section
+662: 1 (diff: 0) | ══════════════════════════════════════════════════════════ */}
+663: 2 (diff: 1) | <section className="relative py-32 lg:py-48 bg-[#1a0a2e] overflow-hidden text-white noise-bg">
+664: 2 (diff: 0) | {/* Dynamic Accents */}
+665: 2 (diff: 0) | <div className="absolute top-0 right-0 w-1/2 h-full bg-magenta/5 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2" />
+666: 2 (diff: 0) | <div className="absolute bottom-0 left-0 w-1/2 h-full bg-rich-purple/5 blur-3xl rounded-full -translate-x-1/2 translate-y-1/2" />
+667: 2 (diff: 0) | 
+668: 3 (diff: 1) | <div className="relative z-10 max-w-[1600px] mx-auto px-6 lg:px-12">
+669: 4 (diff: 1) | <div className="flex flex-col lg:flex-row items-center justify-between gap-24">
+670: 4 (diff: 0) | 
+671: 5 (diff: 1) | <div className="w-full lg:w-1/2">
+672: 6 (diff: 1) | <motion.div
+673: 6 (diff: 0) | initial={{ opacity: 0, y: 20 }}
+674: 6 (diff: 0) | whileInView={{ opacity: 1, y: 0 }}
+675: 6 (diff: 0) | viewport={{ once: true }}
+676: 6 (diff: 0) | >
+677: 7 (diff: 1) | <div className="flex items-center gap-4 mb-8">
+678: 7 (diff: 0) | <div className="w-12 h-[1px] bg-magenta" />
+679: 7 (diff: 0) | <span className="text-[10px] font-black tracking-[0.3em] uppercase text-magenta">Official Recognition</span>
+680: 6 (diff: -1) | </div>
+681: 7 (diff: 1) | <h2 className="font-serif text-5xl lg:text-8xl font-black mb-10 leading-none" style={{ fontFamily: 'var(--font-crimson-pro), serif' }}>
+682: 7 (diff: 0) | World-Class <br />
+683: 7 (diff: 0) | <span className="text-stroke-sm" style={{ WebkitTextStroke: '1.5px rgba(255,255,255,0.2)', color: 'transparent' }}>Accreditation</span>
+684: 6 (diff: -1) | </h2>
+685: 7 (diff: 1) | <p className="text-lg text-white/50 leading-relaxed mb-12 max-w-xl">
+686: 7 (diff: 0) | Biospectra is proud to be part of the SJIF Journals Master List, a global benchmark for scientific quality and research impact.
+687: 6 (diff: -1) | </p>
+688: 6 (diff: 0) | 
+689: 7 (diff: 1) | <div className="flex flex-col sm:flex-row items-start gap-12">
+690: 8 (diff: 1) | <div className="glass-premium border-white/5 p-10 lg:p-14 rounded-3xl">
+691: 8 (diff: 0) | <div className="text-[10px] font-black tracking-[0.3em] uppercase text-magenta mb-4">Master List Index</div>
+692: 9 (diff: 1) | <div className="flex items-baseline gap-4">
+693: 9 (diff: 0) | <span className="text-6xl lg:text-8xl font-black tracking-tighter">8.546</span>
+694: 9 (diff: 0) | <span className="text-sm font-bold text-white/30 tracking-widest uppercase">2023 IF</span>
+695: 8 (diff: -1) | </div>
+696: 7 (diff: -1) | </div>
+697: 7 (diff: 0) | 
+698: 8 (diff: 1) | <div className="flex flex-col gap-6 pt-4">
+699: 8 (diff: 0) | {[
+700: 8 (diff: 0) | { label: "SJIF Indexed", val: "Global Recognition" },
+701: 8 (diff: 0) | { label: "Peer Reviewed", val: "Rigorous Excellence" },
+702: 8 (diff: 0) | { label: "High Impact", val: "8.546 Score" }
+703: 8 (diff: 0) | ].map(stat => (
+704: 9 (diff: 1) | <div key={stat.label}>
+705: 9 (diff: 0) | <div className="text-[10px] font-black text-magenta uppercase tracking-widest mb-1">{stat.label}</div>
+706: 9 (diff: 0) | <div className="text-sm font-bold tracking-wider">{stat.val}</div>
+707: 8 (diff: -1) | </div>
+708: 8 (diff: 0) | ))}
+709: 7 (diff: -1) | </div>
+710: 6 (diff: -1) | </div>
+711: 5 (diff: -1) | </motion.div>
+712: 4 (diff: -1) | </div>
+713: 4 (diff: 0) | 
+714: 5 (diff: 1) | <div className="w-full lg:w-[40%]">
+715: 6 (diff: 1) | <motion.div
+716: 6 (diff: 0) | initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
+717: 6 (diff: 0) | whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+718: 6 (diff: 0) | viewport={{ once: true }}
+719: 6 (diff: 0) | transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+720: 6 (diff: 0) | className="relative group p-4 bg-white/5 border border-white/10"
+721: 6 (diff: 0) | >
+722: 6 (diff: 0) | <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+723: 6 (diff: 0) | <Image src={certificateImg} alt="SJIF Certificate" width={500} height={700} className="w-full h-auto shadow-[20px_40px_100px_rgba(0,0,0,0.5)]" />
+724: 6 (diff: 0) | 
+725: 6 (diff: 0) | {/* Overlay Badge */}
+726: 7 (diff: 1) | <div className="absolute -bottom-10 -left-10 w-40 h-40 glass-premium rounded-full flex flex-col items-center justify-center text-center p-6 border-white/10 animate-bounce-slow">
+727: 7 (diff: 0) | <div className="text-[24px] font-black leading-none">A+</div>
+728: 7 (diff: 0) | <div className="text-[8px] font-bold text-magenta tracking-widest uppercase mt-2">Editorial Rating</div>
+729: 6 (diff: -1) | </div>
+730: 5 (diff: -1) | </motion.div>
+731: 4 (diff: -1) | </div>
+732: 4 (diff: 0) | 
+733: 3 (diff: -1) | </div>
+734: 2 (diff: -1) | </div>
+735: 1 (diff: -1) | </section>
+736: 1 (diff: 0) | 
+737: 1 (diff: 0) | 
+738: 1 (diff: 0) | {/* ══════════════════════════════════════════════════════════
+739: 1 (diff: 0) | PAGE FOOTER — Minimal & Aesthetic
+740: 1 (diff: 0) | ══════════════════════════════════════════════════════════ */}
+741: 2 (diff: 1) | <footer style={{ background: P.offWhite, padding: 'clamp(60px, 8vw, 100px) 0', borderTop: `1px solid ${P.borderSoft}` }}>
+742: 3 (diff: 1) | <div style={{ maxWidth: 1600, margin: '0 auto', padding: '0 clamp(20px, 5vw, 60px)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 40 }}>
+743: 4 (diff: 1) | <div className="flex flex-col items-center gap-6">
+744: 5 (diff: 1) | <div className="flex items-center gap-6 sm:gap-10">
+745: 5 (diff: 0) | <Image src={msetLogo} alt="MSET" width={56} height={56} className="opacity-80 grayscale hover:grayscale-0 transition-all duration-500" />
+746: 5 (diff: 0) | <div style={{ width: 1, height: 40, background: P.borderSoft }} />
+747: 5 (diff: 0) | <Image src={iccbLogo} alt="ICCB" width={48} height={48} className="opacity-80 grayscale hover:grayscale-0 transition-all duration-500" />
+748: 4 (diff: -1) | </div>
+749: 5 (diff: 1) | <p style={{ fontSize: 'clamp(10px, 1.2vw, 11px)', textTransform: 'uppercase', letterSpacing: '0.24em', color: P.textMuted, fontWeight: 700, textAlign: 'center' }}>
+750: 5 (diff: 0) | Official Publication of MSET &amp; ICCB • ISSN: 0973-7057
+751: 4 (diff: -1) | </p>
+752: 3 (diff: -1) | </div>
+753: 3 (diff: 0) | 
+754: 3 (diff: 0) | <div className="w-full max-w-[1200px] h-px bg-gradient-to-r from-transparent via-purple-200 to-transparent opacity-50" />
+755: 3 (diff: 0) | 
+756: 4 (diff: 1) | <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-[1400px] gap-10">
+757: 5 (diff: 1) | <p style={{ fontSize: 13, color: P.textMuted, opacity: 0.8 }} className="text-center md:text-left">
+758: 5 (diff: 0) | &copy; {new Date().getFullYear()} Biospectra Journal. Empowering biological sciences since 2006.
+759: 4 (diff: -1) | </p>
+760: 5 (diff: 1) | <div className="flex flex-wrap justify-center items-center gap-x-10 gap-y-4">
+761: 5 (diff: 0) | {['About', 'Editorial Board', 'Archive', 'Contact'].map(item => (
+762: 6 (diff: 1) | <Link key={item} href={`/${item.toLowerCase().replace(' ', '')}`} style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 800, color: P.deepPurple }} className="hover:text-magenta transition-colors">
+763: 6 (diff: 0) | {item}
+764: 5 (diff: -1) | </Link>
+765: 5 (diff: 0) | ))}
+766: 4 (diff: -1) | </div>
+767: 3 (diff: -1) | </div>
+768: 2 (diff: -1) | </div>
+769: 1 (diff: -1) | </footer>
+770: 0 (diff: -1) | </div>
+771: 0 (diff: 0) | );
+772: 0 (diff: 0) | };
+773: 0 (diff: 0) | 
+774: 0 (diff: 0) | export default Home;
+775: 0 (diff: 0) | 

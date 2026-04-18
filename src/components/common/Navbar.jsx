@@ -43,26 +43,27 @@ const Navbar = () => {
   return (
     <>
       <nav
-        className="fixed w-full z-100 transition-all duration-500"
+        className="fixed z-100 transition-all duration-500 overflow-hidden"
         style={{
+          top: '12px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 'clamp(320px, 96vw, 1500px)',
+          borderRadius: '24px',
           background: scrolled
-            ? 'rgba(253,252,255,0.97)'
-            : 'rgba(253,252,255,0.88)',
-          backdropFilter: 'blur(20px)',
-          borderBottom: scrolled
-            ? `1px solid ${P.border}`
-            : '1px solid rgba(139,0,204,0.05)',
+            ? 'rgba(255, 255, 255, 0.8)'
+            : 'rgba(255, 255, 255, 0.4)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          border: scrolled
+            ? '1px solid rgba(255, 255, 255, 0.8)'
+            : '1px solid rgba(255, 255, 255, 0.3)',
           boxShadow: scrolled
-            ? '0 4px 28px rgba(90,0,150,0.1)'
-            : 'none',
-          paddingTop: 'var(--sat, 0px)', // Notch handling
+            ? '0 10px 30px rgba(90, 0, 150, 0.08)'
+            : '0 4px 20px rgba(0, 0, 0, 0.02)',
         }}
       >
-        {/* Top accent line — purple→magenta gradient */}
-        <div
-          className="absolute top-0 left-0 right-0 h-[3px]"
-          style={{ background: `linear-gradient(90deg, ${P.deepPurple}, ${P.magenta}, ${P.vivid})` }}
-        />
+
 
         <div
           className="mx-auto flex items-center justify-between"
@@ -212,26 +213,7 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* ── MOBILE HAMBURGER ── */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden z-[110]"
-            style={{
-              background: 'none',
-              border: `1.5px solid ${isOpen ? 'transparent' : P.border}`,
-              padding: '10px',
-              cursor: 'pointer',
-              color: isOpen ? P.magenta : P.richPurple,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: '8px',
-              transition: 'all 0.3s ease',
-            }}
-            aria-label="Toggle menu"
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+
         </div>
       </nav>
 
