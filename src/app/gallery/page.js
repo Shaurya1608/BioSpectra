@@ -114,7 +114,7 @@ const Gallery = () => {
               
               {/* Expand Icon */}
               <div 
-                style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)' }}
+                style={{ background: 'rgba(255,255,255,0.2)' }}
                 className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 w-8 h-8 rounded-full flex items-center justify-center text-white"
               >
                 <Maximize2 size={14} />
@@ -123,7 +123,7 @@ const Gallery = () => {
               {/* Date Tag */}
               {item.date && (
                 <div 
-                  style={{ background: 'rgba(45,0,87,0.7)', backdropFilter: 'blur(10px)' }}
+                  style={{ background: 'rgba(45,0,87,0.85)' }}
                   className="absolute bottom-4 right-4 text-white text-[9px] font-black px-2.5 py-1 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   {item.date}
@@ -142,7 +142,7 @@ const Gallery = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedImg(null)}
-            className="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-12"
+            className="fixed inset-0 z-[100] bg-slate-950/95 flex items-center justify-center p-4 md:p-12"
           >
             <button 
               className="absolute top-8 right-8 text-white/50 hover:text-magenta transition-colors hover:rotate-90 duration-300"

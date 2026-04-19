@@ -1,7 +1,7 @@
 'use client';
 import React, { useRef, useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useSpring, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight, BookOpen, ShieldCheck,
   Layers, Globe, ChevronLeft, ChevronRight,
@@ -12,8 +12,7 @@ import ArticleCard from '@/components/common/ArticleCard';
 import articlesData from '@/data/articles.json';
 
 // Dynamic import to prevent SSR for the WebGL canvas
-// Tree model removed as per user request for book cover replacement
-// const TreeModel3D = dynamic(() => import('@/components/common/TreeModel3D'), { ssr: false });
+const JournalModel3D = dynamic(() => import('@/components/common/JournalModel3D'), { ssr: false });
 
 // Assets
 const biospectraCover  = '/assets/biospectra.jpg';
@@ -29,9 +28,10 @@ const P = {
   vivid:        '#8b00cc',   // vivid purple
   magenta:      '#be00be',   // magenta-purple from "BIOSPECTRA" lettering
   white:        '#ffffff',
+  neutral:      '#fafafa',   // even lighter professional slate
   offWhite:     '#fdfcff',   // barely-tinted white
-  lavenderMist: '#f5eeff',   // section bg
-  lavenderSoft: '#ede0ff',   // card bg
+  lavenderMist: '#f5eeff',   // soft highlight tone
+  lavenderSoft: '#ede0ff',   // card highlight
   borderSoft:   'rgba(139,0,204,0.1)',
   textBody:     '#3d2a5a',
   textMuted:    '#7c5da0',
@@ -48,7 +48,33 @@ const Home = () => {
   useEffect(() => {
     setMounted(true);
   }, []);
-
+  
+  // ── 3D Tilt Logic ──
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  
+  const mouseXSpring = useSpring(x, { stiffness: 150, damping: 20 });
+  const mouseYSpring = useSpring(y, { stiffness: 150, damping: 20 });
+  
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ['10deg', '-10deg']);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ['-10deg', '10deg']);
+  
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    const xPct = mouseX / width - 0.5;
+    const yPct = mouseY / height - 0.5;
+    x.set(xPct);
+    y.set(yPct);
+  };
+  
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
 
   const scroll = (direction) => {
     if (scrollContainerRef.current) {
@@ -64,347 +90,320 @@ const Home = () => {
     <div className="flex flex-col w-full">
 
       {/* ══════════════════════════════════════════════════════════
-          HERO — Purple editorial split layout (Mobile First)
+          HERO
       ══════════════════════════════════════════════════════════ */}
       <section
-        className="relative min-h-screen w-full overflow-hidden flex flex-col lg:block"
-        style={{ background: P.lavenderMist, fontFamily: 'var(--font-inter), sans-serif', paddingTop: 'var(--sat, 0px)' }}
+        className="relative min-h-[100svh] w-full overflow-hidden flex flex-col justify-center"
+        style={{ 
+          fontFamily: 'var(--font-inter), sans-serif', 
+          paddingTop: 'calc(var(--sat, 0px) + 72px)',
+        }}
       >
-        {/* Top accent bar — magenta-to-purple */}
-        <div
-          className="absolute top-0 left-0 right-0 h-[3px] z-20"
-          style={{ background: `linear-gradient(90deg, ${P.deepPurple}, ${P.magenta}, ${P.vivid})` }}
-        />
-
-        {/* Large ghost number */}
-        <div
-          className="absolute select-none pointer-events-none hidden sm:block"
-          style={{
-            right: '6%',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            fontSize: 'clamp(140px, 22vw, 300px)',
-            fontWeight: 900,
-            color: `rgba(90,0,150,0.04)`,
-            lineHeight: 1,
-            letterSpacing: '-0.05em',
-            zIndex: 1,
-          }}
-        >
-          01
+        {/* DNA background image */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          <Image
+            src="/assets/new-Landing/biospec-dna.png"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover object-center"
+            style={{ opacity: 0.8 }}
+            priority
+          />
         </div>
 
-        {/* ── RESPONSIVE GRID ── */}
-        <div className="relative z-10 min-h-[100svh] pt-[80px] lg:pt-[100px] pb-4 sm:pb-6 lg:pb-8 px-4 sm:px-6 lg:px-8 flex flex-col lg:grid lg:grid-cols-[1fr_1.15fr] gap-4 lg:gap-6">
+        {/* Layered gradient overlays — depth + vignette */}
+        <div className="absolute inset-0 z-[1]" style={{ background: 'linear-gradient(105deg, rgba(15,0,35,0.6) 0%, rgba(25,0,50,0.4) 45%, rgba(15,0,30,0.1) 100%)' }} />
+        
+        {/* Technical Grid Overlay */}
+        <div className="absolute inset-0 z-[1] opacity-[0.04]" 
+          style={{ 
+            backgroundImage: `linear-gradient(to right, rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.2) 1px, transparent 1px)`,
+            backgroundSize: '40px 40px'
+          }} 
+        />
 
-          {/* ────────────── CONTENT COLUMN (Order: 1) ────────────── */}
-          <div
-            className="flex flex-col justify-center relative px-6 sm:px-12 lg:pl-[min(8.5vw,110px)] lg:pr-[min(5vw,70px)] py-12 lg:py-8 bg-white rounded-[2rem]"
-            style={{ boxShadow: '0 10px 40px -10px rgba(0,0,0,0.05)' }}
-          >
+        {/* Scientific Markers & Coordinates */}
+        <div className="absolute inset-0 z-[2] overflow-hidden pointer-events-none opacity-20">
+          {/* Scale Bars */}
+          <div className="absolute top-1/4 left-8 flex items-center gap-2">
+            <div className="h-[1px] w-8 bg-white/30" />
+            <span className="text-[7px] tracking-[0.3em] uppercase text-white/40 font-mono">[ 100μm ]</span>
+          </div>
+          <div className="absolute bottom-1/4 right-10 flex items-center gap-2 rotate-90">
+            <div className="h-[1px] w-12 bg-white/30" />
+            <span className="text-[7px] tracking-[0.3em] uppercase text-white/40 font-mono">[ SCALE_REF_01 ]</span>
+          </div>
 
-            {/* Vertical watermark */}
-            <div
-              className="absolute hidden xl:block select-none pointer-events-none"
+          {/* Coordinate Points */}
+          <span className="absolute top-10 right-20 text-[6px] font-mono text-white/20">LAT: 23°34'N // LON: 85°18'E</span>
+          <span className="absolute bottom-20 left-12 text-[6px] font-mono text-white/20">REF_ID: BS-8.546-2024</span>
+          
+          {/* DNA Sequence Strings */}
+          <div className="absolute right-[10%] top-20 h-full w-[1px] flex flex-col gap-4 text-[6px] font-mono text-white/5 uppercase select-none leading-none">
+            {['G','A','T','C','T','A','C','G','A','T','G','C','G','A','T','G','A','T','T','A','A'].map((n, i) => <span key={i}>{n}</span>)}
+          </div>
+        </div>
+
+        {/* Vertical Editorial Anchor Line */}
+        <div className="absolute left-[clamp(24px,6vw,84px)] top-0 bottom-0 w-[1px] z-[2] bg-gradient-to-b from-transparent via-white/10 to-transparent hidden lg:block" />
+
+        <div className="absolute inset-0 z-[1]" style={{ background: 'radial-gradient(ellipse at 20% 50%, rgba(139,0,204,0.15) 0%, transparent 65%)' }} />
+        {/* Bottom fade so stats strip reads cleanly */}
+        <div className="absolute bottom-0 left-0 right-0 h-40 z-[2]" style={{ background: 'linear-gradient(to top, rgba(15,0,35,0.4), transparent)' }} />
+
+        {/* Hero content — two-column on desktop */}
+        <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16 py-16 lg:py-20 flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+          
+          {/* ── LEFT: Text ── */}
+          <div className="w-full lg:flex-1 text-center lg:text-left">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="mx-auto lg:mx-0"
               style={{
-                left: 12,
-                top: '50%',
-                transform: 'translateY(-50%) rotate(180deg)',
-                writingMode: 'vertical-rl',
-                fontSize: 'clamp(56px,8vw,110px)',
-                fontWeight: 900,
-                color: `rgba(90,0,150,0.05)`,
-                letterSpacing: '0.14em',
-                textTransform: 'lowercase',
-                lineHeight: 1,
+                position: 'relative',
+                maxWidth: 580,
+                width: '100%'
               }}
             >
-              journal
-            </div>
+              
+              {/* Pill badge */}
+              <div className="inline-flex items-center gap-2 mb-8 mx-auto lg:mx-0"
+                style={{ background: 'rgba(190,0,190,0.25)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 99, padding: '5px 16px' }}>
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse shadow-[0_0_10px_rgba(255,255,255,0.45)] flex-shrink-0" />
+                <span className="text-label !text-white !tracking-[0.12em] !uppercase whitespace-nowrap" style={{ fontSize: 'clamp(9px, 2.3vw, 11px)' }}>
+                  International Journal of Life Sciences
+                </span>
+              </div>
 
-            {/* Tag line */}
-            <motion.div
-              initial={{ opacity: 0, x: -18 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.55, delay: 0.1 }}
-              className="flex items-center gap-3 mb-6 sm:mb-8"
-            >
-              <div style={{ height: 1, width: 36, background: P.magenta }} className="shrink-0" />
-              <span style={{ fontSize: 'clamp(8.5px, 1.2vw, 10px)', letterSpacing: '0.24em', textTransform: 'uppercase', fontWeight: 700, color: P.magenta }}>
-                International Journal of Life Sciences
-              </span>
-            </motion.div>
-
-            {/* Main headline block */}
-            <motion.div
-              initial={{ opacity: 0, y: 28 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.68, delay: 0.22 }}
-              className="relative"
-            >
-              <h1
-                style={{
-                  fontFamily: 'var(--font-crimson-pro), serif',
-                  fontSize: 'clamp(42px, 8vw, 86px)',
-                  fontWeight: 900,
-                  color: '#000',
-                  lineHeight: 0.95,
+              {/* Main Headline */}
+              <h1 className="heading-display mb-6" 
+                style={{ 
+                  fontSize: 'clamp(38px, 8vw, 60px)',
+                  color: '#ffffff',
+                  textShadow: '0 10px 30px rgba(0,0,0,0.3)',
                   letterSpacing: '-0.02em',
-                  margin: 0,
+                  lineHeight: 1
                 }}
               >
                 BIOSPECTRA
               </h1>
 
-              {/* Rule + sub-headline */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 12 }}>
-                <div style={{ height: 2, width: 'clamp(30px, 5vw, 52px)', background: `linear-gradient(90deg, ${P.deepPurple}, ${P.magenta})`, flexShrink: 0 }} />
-                <span
-                  style={{
-                    fontFamily: 'var(--font-crimson-pro), serif',
-                    fontSize: 'clamp(14px, 2.5vw, 28px)',
-                    fontWeight: 600,
-                    color: P.richPurple,
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  SCIENTIFIC RESEARCH
+              {/* Sub label */}
+              <div className="flex items-center justify-center lg:justify-start gap-4 mb-8">
+                <div className="h-[1px] w-12 bg-white/40 hidden sm:block" />
+                <span className="text-label" style={{ fontSize: 10, letterSpacing: '0.3em', color: '#ffffff' }}>
+                  Scientific Research
                 </span>
-              </div>
-            </motion.div>
-
-            {/* Description */}
-            <motion.p
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.68, delay: 0.38 }}
-              style={{
-                fontSize: 'clamp(12px, 1.5vw, 13px)',
-                color: P.textBody,
-                lineHeight: 1.8,
-                maxWidth: 400,
-                marginTop: 24,
-                marginBottom: 32,
-              }}
-              className="opacity-90"
-            >
-              An International Biannual Refereed Journal of Life Sciences (ISSN: 0973-7057). Dedicated to the advancement of biological scientific knowledge since 2006.
-            </motion.p>
-
-            {/* CTA buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.68, delay: 0.52 }}
-              className="flex flex-col xs:flex-row gap-4 mb-12 sm:mb-16"
-            >
-              <Link href="/archive" className="w-full xs:w-auto">
-                <button
-                  id="hero-cta-explore"
-                  className="w-full xs:w-auto"
-                  style={{
-                    background: `linear-gradient(135deg, ${P.deepPurple}, ${P.richPurple})`,
-                    color: '#fff',
-                    border: 'none',
-                    padding: '14px 32px',
-                    fontSize: 10,
-                    fontWeight: 700,
-                    letterSpacing: '0.18em',
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 8,
-                    transition: 'all 0.25s ease',
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 8px 24px rgba(90,0,150,0.35)`; }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
-                >
-                  explore <ArrowRight size={13} />
-                </button>
-              </Link>
-
-              <Link href="/submit" className="w-full xs:w-auto">
-                <button
-                  id="hero-cta-submit"
-                  className="w-full xs:w-auto"
-                  style={{
-                    background: 'transparent',
-                    color: P.richPurple,
-                    border: `1.5px solid ${P.richPurple}`,
-                    padding: '13px 28px',
-                    fontSize: 10,
-                    fontWeight: 600,
-                    letterSpacing: '0.14em',
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                    transition: 'all 0.25s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.background = P.richPurple; e.currentTarget.style.color = '#fff'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = P.richPurple; }}
-                >
-                  Submit Article
-                </button>
-              </Link>
-            </motion.div>
-
-            {/* Bottom stat bar */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.72 }}
-              className="flex items-center gap-8 sm:gap-12"
-            >
-              <div style={{ borderLeft: `2px solid ${P.lavenderSoft}`, paddingLeft: 14 }}>
-                <div style={{ fontSize: 'clamp(22px, 4vw, 26px)', fontWeight: 900, background: `linear-gradient(135deg, ${P.deepPurple}, ${P.magenta})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', lineHeight: 1 }}>8.546</div>
-                <div style={{ fontSize: 8.5, letterSpacing: '0.2em', textTransform: 'uppercase', color: P.textMuted, marginTop: 4 }}>Impact Factor</div>
+                <div className="h-[1px] w-12 bg-white/40 hidden sm:block lg:hidden" />
               </div>
 
-              <div
-                style={{
-                  background: `linear-gradient(135deg, ${P.deepPurple}, ${P.richPurple})`,
-                  padding: '12px 20px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                }}
-              >
-                <div
-                  style={{
-                    writingMode: 'vertical-rl',
-                    transform: 'rotate(180deg)',
-                    fontSize: 8,
-                    fontWeight: 700,
-                    letterSpacing: '0.22em',
-                    textTransform: 'uppercase',
-                    color: 'rgba(255,255,255,0.55)',
-                  }}
-                >
-                  Vol.17
-                </div>
-                <div style={{ color: '#fff', fontWeight: 900, fontSize: 14, letterSpacing: '0.05em' }}>Issue 2</div>
+              <p className="text-editorial text-white max-w-[480px] mb-12 mx-auto lg:mx-0" style={{ fontSize: 'clamp(12px, 1.4vw, 15px)', textShadow: '0 2px 10px rgba(0,0,0,0.2)', color: '#ffffff', lineHeight: 1.7, opacity: 0.95 }}>
+                An International Biannual Refereed Journal of Life Sciences <span className="font-bold text-white">(ISSN: 0973-7057)</span>. Dedicated to the advancement of biological scientific knowledge since 2006.
+              </p>
+
+              {/* CTA Buttons */}
+              <div className="flex items-center justify-center lg:justify-start gap-2.5 sm:gap-3 flex-nowrap mb-10">
+                <Link href="/archive" className="flex-1 sm:flex-none">
+                  <motion.button
+                    whileHover={{ scale: 1.04, y: -2 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="w-full sm:w-auto"
+                    style={{
+                      padding: '11px 22px',
+                      background: 'linear-gradient(135deg, #be00be, #8b00cc)',
+                      border: 'none',
+                      color: '#fff',
+                      fontSize: 'clamp(9px, 2.5vw, 10.5px)',
+                      fontWeight: 800,
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                      borderRadius: 6,
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      boxShadow: '0 6px 24px rgba(190,0,190,0.45), inset 0 1px 0 rgba(255,255,255,0.2)',
+                    }}
+                  >Explore Issues</motion.button>
+                </Link>
+                <Link href="/submit" className="flex-1 sm:flex-none">
+                  <motion.button
+                    whileHover={{ scale: 1.04, y: -2 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="w-full sm:w-auto"
+                    style={{
+                      padding: '11px 22px',
+                      background: 'rgba(255,255,255,0.15)',
+                      border: '1px solid rgba(255,255,255,0.25)',
+                      color: '#fff',
+                      fontSize: 'clamp(9px, 2.5vw, 10.5px)',
+                      fontWeight: 700,
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                      borderRadius: 6,
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >Submit Article</motion.button>
+                </Link>
               </div>
-            </motion.div>
-          </div>
 
-          {/* ────────────── VISUAL COLUMN (Order: 2) ────────────── */}
-          <div
-            className="relative flex flex-col items-center justify-center overflow-hidden rounded-[2rem] pb-20 pt-10 lg:py-0"
-            style={{ minHeight: '400px' }}
-          >
-            {/* Background design */}
-            <div
-              className="absolute inset-0"
-              style={{ background: `linear-gradient(135deg, ${P.deepPurple} 0%, ${P.richPurple} 40%, #a020cc 70%, #c440e0 100%)` }}
-            />
-            <div
-              className="absolute inset-0 pointer-events-none opacity-40 sm:opacity-60"
-              style={{
-                backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px)`,
-                backgroundSize: '32px 32px',
-              }}
-            />
-
-            {/* Journal Book Cover — Premium Presentation */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 30 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.2, ease: [0.23, 1, 0.32, 1] }}
-              className="relative z-20 px-10 sm:px-0 w-full max-w-[280px] sm:max-w-[340px] xl:max-w-[420px]"
-            >
+              {/* Stat strip inside glass */}
               <motion.div
-                animate={{ y: [0, -12, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                style={{
-                  background: '#fff',
-                  padding: 'clamp(8px, 1.5vw, 12px)',
-                  boxShadow: '0 30px 60px -15px rgba(26,0,50,0.5), 0 15px 30px -10px rgba(0,0,0,0.3)',
-                  border: `1px solid ${P.borderSoft}`,
-                  position: 'relative',
-                  zIndex: 2,
-                }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.6 }}
+                className="flex items-center justify-center lg:justify-start gap-0"
+                style={{ paddingTop: 32 }}
               >
-                <Image 
-                  src={biospectraCover} 
-                  alt="Biospectra Journal Cover" 
-                  width={600} 
-                  height={800} 
-                  style={{ width: '100%', height: 'auto', display: 'block' }} 
-                  priority
-                />
+                {[
+                  { value: '8.546', label: 'SJIF Impact Factor', accent: '#d966d6' },
+                  { value: 'Vol. 17', label: 'Issue 2 · 2024', accent: '#a855f7' },
+                  { value: '2006', label: 'Est. Year', accent: '#7c3aed' },
+                ].map((stat, i) => (
+                  <React.Fragment key={i}>
+                    <div style={{ padding: i === 0 ? '0 28px 0 0' : '0 28px' }}>
+                      <div style={{ fontSize: 20, fontWeight: 900, color: '#fff', letterSpacing: '-0.02em', lineHeight: 1, textShadow: `0 0 20px ${stat.accent}55` }}>
+                        {stat.value}
+                      </div>
+                      <div style={{ fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.7)', marginTop: 5, fontWeight: 700 }}>
+                        {stat.label}
+                      </div>
+                    </div>
+                    {i < 2 && <div style={{ width: 1, height: 32, background: 'rgba(255,255,255,0.1)', flexShrink: 0 }} />}
+                  </React.Fragment>
+                ))}
               </motion.div>
-
-              {/* Decorative accent behind the book */}
-              <div 
-                className="absolute top-[10%] -left-[10%] -right-[10%] bottom-[-5%] bg-white/5 border border-white/10 z-[1] transform -rotate-2 hidden sm:block" 
-              />
             </motion.div>
+          </div>
 
-            {/* Oval ground shadow */}
-            <div
-              className="absolute z-10 pointer-events-none bottom-[10%] lg:bottom-[15%] left-1/2 -translateX-1/2"
-              style={{
-                width: 'clamp(200px, 60%, 320px)',
-                height: 18,
-                background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, transparent 75%)',
-                borderRadius: '50%',
-                transform: 'translateX(-50%)',
+          {/* ── RIGHT: Free-floating 3D Journal Model ── */}
+          <motion.div
+            initial={{ opacity: 0, x: 60, scale: 0.9 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ duration: 1.2, delay: 0.3, ease: [0.16,1,0.3,1] }}
+            className="hidden lg:flex w-full lg:w-[480px] lg:flex-shrink-0 justify-center items-center relative"
+          >
+            {/* Ambient Background Glow */}
+            <motion.div 
+              animate={{ 
+                scale: [1, 1.2, 1],
+                opacity: [0.25, 0.4, 0.25]
               }}
+              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+              style={{
+                position: 'absolute', 
+                width: '100%',
+                height: '100%',
+                background: 'radial-gradient(circle, rgba(139,0,204,0.3) 0%, transparent 70%)',
+                filter: 'blur(40px)',
+                pointerEvents: 'none',
+                zIndex: 0
+              }} 
             />
 
-            {/* ISSN badge */}
-            <div
-              className="absolute top-6 right-6 sm:top-10 sm:right-10 z-30"
+            {/* The 3D Component */}
+            <div className="relative z-10 w-full h-[500px]">
+              <JournalModel3D />
+            </div>
+
+            {/* Floating SJIF badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 30, rotate: 15 }}
+              animate={{ 
+                opacity: 1,
+                y: [0, -10, 0],
+                rotate: [0, 5, 0]
+              }}
+              transition={{ 
+                opacity: { duration: 0.8, delay: 1.2 },
+                y: { duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 2 },
+                rotate: { duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 2 }
+              }}
               style={{
-                background: 'rgba(255,255,255,0.08)',
-                border: '1px solid rgba(255,255,255,0.15)',
+                position: 'absolute',
+                top: '15%',
+                right: '0%',
+                background: 'linear-gradient(135deg, #be00be, #8b00cc)',
+                borderRadius: 14,
+                padding: '12px 20px',
+                boxShadow: '0 10px 30px rgba(139,0,204,0.4)',
+                border: '1px solid rgba(255,255,255,0.2)',
                 backdropFilter: 'blur(12px)',
-                padding: '10px 18px',
+                WebkitBackdropFilter: 'blur(12px)',
+                zIndex: 20
               }}
             >
-              <div style={{ fontSize: 7.5, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)', marginBottom: 2 }}>P-ISSN</div>
-              <div style={{ fontSize: 'clamp(11px, 1.5vw, 13px)', fontWeight: 700, color: '#fff', letterSpacing: '0.05em' }}>0973 – 7057</div>
-            </div>
-          </div>
+              <div style={{ fontSize: 8, fontWeight: 800, color: 'rgba(255,255,255,0.8)', letterSpacing: '0.25em', textTransform: 'uppercase', textAlign: 'center', marginBottom: 4 }}>SJIF Factor</div>
+              <div style={{ fontSize: 28, fontWeight: 900, color: '#fff', lineHeight: 1, textAlign: 'center', letterSpacing: '-0.02em' }}>8.546</div>
+            </motion.div>
+
+            {/* Floating ISSN badge (Repositioned for 3D) */}
+            <motion.div
+              initial={{ opacity: 0, y: -30, rotate: -15 }}
+              animate={{ 
+                opacity: 1,
+                y: [0, 10, 0],
+                rotate: [0, -5, 0]
+               }}
+              transition={{ 
+                opacity: { duration: 0.8, delay: 1.5 },
+                y: { duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 2.5 },
+                rotate: { duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 2.5 }
+              }}
+              style={{
+                position: 'absolute',
+                bottom: '15%',
+                left: '-5%',
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.12)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                borderRadius: 14,
+                padding: '14px 24px',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+                zIndex: 20,
+              }}
+            >
+              <div style={{ fontSize: 8, fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 4 }}>ISSN Identification</div>
+              <div style={{ fontSize: 16, fontWeight: 800, color: '#fff', letterSpacing: '0.1em' }}>0973-7057</div>
+            </motion.div>
+          </motion.div>
         </div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2 }}
+        >
+          <span style={{ fontSize: 8, letterSpacing: '0.25em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)', fontWeight: 600 }}>Scroll</span>
+          <motion.div
+            animate={{ y: [0, 7, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ width: 1, height: 32, background: 'linear-gradient(to bottom, rgba(255,255,255,0.4), rgba(255,255,255,0))' }}
+          />
+        </motion.div>
       </section>
 
       {/* ══════════════════════════════════════════════════════════
           GOVERNING BODIES
       ══════════════════════════════════════════════════════════ */}
-      <section style={{ background: P.lavenderMist, borderTop: `1px solid ${P.borderSoft}`, padding: 'clamp(60px, 8vw, 100px) 0' }}>
+      <section style={{ background: P.neutral, borderTop: `1px solid ${P.borderSoft}`, padding: 'clamp(40px, 5vw, 60px) 0' }}>
         <div style={{ maxWidth: 1600, margin: '0 auto', padding: '0 clamp(20px, 5vw, 60px)' }}>
           {/* Header */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 'clamp(40px, 8vw, 60px)' }}>
-            <h2
-              style={{
-                fontFamily: 'var(--font-crimson-pro), serif',
-                fontSize: 'clamp(28px, 4vw, 42px)',
-                fontWeight: 900,
-                color: P.deepPurple,
-                letterSpacing: '0.02em',
-                margin: 0,
-                textAlign: 'center',
-                lineHeight: 1.1,
-              }}
-            >
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 'clamp(20px, 4vw, 30px)' }}>
+            <h2 className="heading-section text-center" style={{ fontSize: 'var(--font-lg)', color: P.deepPurple }}>
               OUR GOVERNING BODIES
             </h2>
-            <div style={{ height: 2, width: 44, background: `linear-gradient(90deg, ${P.richPurple}, ${P.magenta})`, margin: '24px 0' }} />
-            <p style={{ fontSize: 'clamp(12px, 1.5vw, 14px)', color: P.textBody, maxWidth: 500, textAlign: 'center', lineHeight: 1.7, letterSpacing: '0.01em' }} className="opacity-80">
+            <div className="h-[2px] w-12 bg-gradient-to-r from-richPurple to-magenta my-6 mx-auto" />
+            <p className="text-editorial text-center max-w-[500px] mx-auto text-base opacity-80">
               Biospectra is officially published under the stewardship of these distinguished academic organizations.
             </p>
           </div>
 
           {/* Cards Grid — Responsive 1 col to 2 cols */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 max-w-[1000px] mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 max-w-[1000px] mx-auto">
             {[
               { name: 'Madhawi Shyam Educational Trust', acronym: 'MSET', desc: 'A dedicated foundation committed to advancing higher education and scientific research across the biological sciences.', logo: msetLogo },
               { name: 'International Consortium of Contemporary Biologists', acronym: 'ICCB', desc: 'An international fellowship of scientists and researchers fostering global collaboration and innovation in modern biology.', logo: iccbLogo },
@@ -416,9 +415,9 @@ const Home = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: i * 0.15 }}
                 style={{
-                  background: 'rgba(255,255,255,0.85)',
-                  border: `1px solid ${P.borderSoft}`,
-                  padding: 'clamp(30px, 5vw, 48px) clamp(20px, 4vw, 36px)',
+                  background: P.white,
+                  border: `1px solid rgba(139,0,204,0.15)`,
+                  padding: 'clamp(20px, 3vw, 32px) clamp(16px, 3vw, 24px)',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
@@ -437,27 +436,17 @@ const Home = () => {
                   <Image src={body.logo} alt={body.name} width={100} height={100} style={{ objectFit: 'contain', maxHeight: '100%', maxWidth: '100%' }} className="group-hover:scale-105 transition-transform duration-500" />
                 </div>
 
-                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.24em', textTransform: 'uppercase', color: P.magenta, marginBottom: 14 }}>
+                <div className="text-label mb-4">
                   {body.acronym}
                 </div>
 
-                <h3
-                  style={{
-                    fontFamily: 'var(--font-crimson-pro), serif',
-                    fontSize: 'clamp(18px, 2vw, 22px)',
-                    fontWeight: 800,
-                    color: '#000',
-                    lineHeight: 1.25,
-                    marginBottom: 16,
-                    letterSpacing: '0.01em',
-                  }}
-                >
+                <h3 className="heading-section text-black mb-4" style={{ fontSize: 'var(--font-md)' }}>
                   {body.name}
                 </h3>
 
-                <div style={{ width: 24, height: 1.5, background: P.borderSoft, marginBottom: 20 }} className="group-hover:w-16 transition-all duration-500" />
+                <div className="w-6 h-[1.5px] bg-border-soft mb-5 group-hover:w-16 transition-all duration-500" />
 
-                <p style={{ fontSize: 'clamp(12px, 1.4vw, 13px)', color: P.textBody, lineHeight: 1.8, margin: 0 }} className="opacity-90">
+                <p className="text-editorial text-sm opacity-90">
                   {body.desc}
                 </p>
               </motion.div>
@@ -577,8 +566,8 @@ const Home = () => {
                 <BookOpen size={24} color={P.richPurple} />
               </div>
               <div className="flex-1">
-                <h4 style={{ fontFamily: 'var(--font-crimson-pro), serif', fontSize: 'clamp(20px, 2.5vw, 24px)', fontWeight: 800, color: P.deepPurple, marginBottom: 6 }}>Contribute to Science</h4>
-                <p style={{ fontSize: 'clamp(12px, 1.4vw, 14px)', color: P.textBody, margin: 0, lineHeight: 1.6 }} className="opacity-90">We invite original research papers and review articles from scholars worldwide. Join our academic community today.</p>
+                <h4 className="heading-section text-black mb-1" style={{ fontSize: 'var(--font-md)' }}>Contribute to Science</h4>
+                <p className="text-editorial text-sm opacity-90">We invite original research papers and review articles from scholars worldwide. Join our academic community today.</p>
               </div>
               <div className="w-full md:w-auto pt-6 md:pt-0">
                 <Link href="/submit" className="w-full">
@@ -612,7 +601,7 @@ const Home = () => {
       {/* ══════════════════════════════════════════════════════════
           EDITORIAL HIGHLIGHTS
       ══════════════════════════════════════════════════════════ */}
-      <section style={{ background: P.lavenderMist, borderTop: `1px solid ${P.borderSoft}`, padding: 'clamp(60px, 10vw, 120px) 0', overflow: 'hidden' }}>
+      <section style={{ background: P.neutral, borderTop: `1px solid ${P.borderSoft}`, padding: 'clamp(60px, 10vw, 120px) 0', overflow: 'hidden' }}>
         <div style={{ maxWidth: 1600, margin: '0 auto', padding: '0 clamp(20px, 5vw, 60px)' }}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
 
@@ -651,26 +640,16 @@ const Home = () => {
 
             {/* Right side: Text details (Ordered 1 on Mobile) */}
             <div className="max-w-[600px] order-1 lg:order-2">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-                <div style={{ width: 32, height: 1.5, background: P.richPurple }} />
-                <span style={{ fontSize: 9.5, letterSpacing: '0.24em', textTransform: 'uppercase', fontWeight: 700, color: P.magenta }}>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-10 h-[1.5px] bg-accent-mid" />
+                <span className="text-label">
                   Editorial Excellence
                 </span>
               </div>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-crimson-pro), serif',
-                  fontSize: 'clamp(32px, 5vw, 46px)',
-                  fontWeight: 900,
-                  color: P.deepPurple,
-                  lineHeight: 1.1,
-                  letterSpacing: '0.01em',
-                  margin: '0 0 20px 0',
-                }}
-              >
+              <h2 className="heading-section mb-6" style={{ fontSize: 'var(--font-lg)', color: P.deepPurple }}>
                 Guided by Academic Rigor
               </h2>
-              <p style={{ fontSize: 'clamp(13px, 1.6vw, 15px)', color: P.textBody, lineHeight: 1.8, margin: '0 0 48px 0', letterSpacing: '0.01em' }} className="opacity-80">
+              <p className="text-editorial text-base opacity-85 leading-relaxed">
                 Our journal is steered by a distinguished editorial board comprising leading scientists from premier global institutions, ensuring every paper meets the highest standards of scientific integrity.
               </p>
 
@@ -687,8 +666,8 @@ const Home = () => {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.15 + 0.2, duration: 0.6 }}
                     style={{
-                      background: 'rgba(255,255,255,0.7)',
-                      border: `1px solid ${P.borderSoft}`,
+                      background: P.white,
+                      border: `1px solid rgba(139,0,204,0.12)`,
                       padding: 'clamp(20px, 4vw, 28px)',
                       display: 'flex',
                       gap: 'clamp(16px, 3vw, 24px)',
@@ -756,11 +735,10 @@ const Home = () => {
                     style={{
                       display: 'inline-flex',
                       flexDirection: 'column',
-                      background: 'rgba(255,255,255,0.06)',
+                      background: 'rgba(255,255,255,0.08)',
                       border: '1px solid rgba(190,0,190,0.3)',
                       padding: '24px 40px',
                       borderRadius: '4px',
-                      backdropFilter: 'blur(8px)',
                     }}
                   >
                     <span style={{ fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 800, color: P.magenta, marginBottom: 10 }}>
@@ -799,7 +777,7 @@ const Home = () => {
                 className="relative group"
               >
                 <div className="absolute inset-0 bg-magenta/20 blur-[60px] rounded-full scale-125 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                <div style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)', padding: 12, backdropFilter: 'blur(12px)', boxShadow: '0 30px 60px rgba(0,0,0,0.3)' }}>
+                <div style={{ background: 'rgba(255,255,255,0.18)', border: '1px solid rgba(255,255,255,0.15)', padding: 12, boxShadow: '0 30px 60px rgba(0,0,0,0.3)' }}>
                   <Image src={certificateImg} alt="SJIF Certificate" width={450} height={600} style={{ width: '100%', maxWidth: 380, height: 'auto', display: 'block' }} className="shadow-2xl" />
                 </div>
               </motion.div>
@@ -811,7 +789,7 @@ const Home = () => {
       {/* ══════════════════════════════════════════════════════════
           PAGE FOOTER — Minimal & Aesthetic
       ══════════════════════════════════════════════════════════ */}
-      <footer style={{ background: P.offWhite, padding: 'clamp(60px, 8vw, 100px) 0', borderTop: `1px solid ${P.borderSoft}` }}>
+      <footer style={{ background: P.white, padding: 'clamp(60px, 8vw, 100px) 0', borderTop: `1px solid ${P.borderSoft}` }}>
         <div style={{ maxWidth: 1600, margin: '0 auto', padding: '0 clamp(20px, 5vw, 60px)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 40 }}>
           <div className="flex flex-col items-center gap-6">
             <div className="flex items-center gap-6 sm:gap-10">
