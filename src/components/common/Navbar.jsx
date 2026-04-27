@@ -17,12 +17,12 @@ const NAV_LINKS = [
 ];
 
 const P = {
-  deepPurple: '#2d0057',
-  richPurple: '#5a0096',
-  vivid:      '#8b00cc',
-  magenta:    '#be00be',
-  textBody:   '#3d2a5a',
-  textMuted:  '#7c5da0',
+  deepGreen:  '#064e3b',
+  emerald:    '#059669',
+  richPurple: '#6d28d9',
+  violet:     '#7c3aed',
+  textBody:   '#1e293b',
+  textMuted:  '#64748b',
 };
 
 const Navbar = () => {
@@ -39,6 +39,9 @@ const Navbar = () => {
 
   useEffect(() => setIsOpen(false), [pathname]);
 
+  const isHomePage = pathname === '/';
+  const isTransparent = isHomePage && !scrolled;
+
   return (
     <>
       <nav
@@ -48,39 +51,38 @@ const Navbar = () => {
           left: 0,
           right: 0,
           width: '100%',
-          background: scrolled
-            ? 'rgba(255, 255, 255, 0.98)'
-            : 'rgba(255, 255, 255, 0.02)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          borderBottom: scrolled
-            ? '1px solid rgba(139,0,204,0.1)'
-            : '1px solid rgba(255, 255, 255, 0.1)',
-          boxShadow: scrolled
-            ? '0 10px 30px rgba(0,0,0,0.06)'
-            : 'none',
+          background: isTransparent
+            ? 'transparent'
+            : (scrolled ? 'rgba(255, 255, 255, 0.98)' : 'rgba(255, 255, 255, 0.85)'),
+          backdropFilter: isTransparent ? 'none' : 'blur(12px)',
+          WebkitBackdropFilter: isTransparent ? 'none' : 'blur(12px)',
+          borderBottom: isTransparent ? 'none' : '1px solid rgba(5, 150, 105, 0.1)',
+          boxShadow: isTransparent 
+            ? 'none' 
+            : (scrolled ? '0 10px 30px rgba(0,0,0,0.06)' : '0 4px 20px rgba(0,0,0,0.02)'),
           overflow: 'hidden',
         }}
       >
         {/* Top shimmer line — glass highlight effect */}
-        <div style={{
-          position: 'absolute', top: 0, left: 0, right: 0, height: 1,
-          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.9) 40%, rgba(190,0,190,0.4) 70%, transparent 100%)',
-          pointerEvents: 'none',
-        }} />
-
+        {!isTransparent && (
+          <div style={{
+            position: 'absolute', top: 0, left: 0, right: 0, height: 1,
+            background: 'linear-gradient(90deg, transparent 0%, rgba(5, 150, 105, 0.4) 40%, rgba(109, 40, 217, 0.4) 70%, transparent 100%)',
+            pointerEvents: 'none',
+          }} />
+        )}
 
 
         <div
           className="mx-auto flex items-center justify-between"
-          style={{ padding: '0 clamp(20px, 3vw, 44px)', height: 72 }}
+          style={{ padding: '0 clamp(20px, 3vw, 44px)', height: 64 }}
         >
 
           {/* ── BRAND BLOCK ── */}
           <Link href="/" className="flex items-center gap-2 shrink-0 group outline-none">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="relative w-11 h-11 sm:w-[54px] sm:h-[54px] flex-shrink-0"
+              className="relative w-10 h-10 sm:w-[48px] sm:h-[48px] flex-shrink-0"
               style={{
                 borderRadius: 0,
                 padding: 0,
@@ -92,31 +94,48 @@ const Navbar = () => {
                 src="/assets/mset-logo-png-removebg-preview.png"
                 alt="MSET Logo"
                 fill
-                className="object-contain p-0.5"
+                className="object-contain p-0.5 transition-all duration-500"
                 priority
               />
             </motion.div>
 
             {/* Vertical divider */}
-            <div style={{ width: 1, height: 38, background: 'linear-gradient(to bottom, transparent, rgba(139,0,204,0.2), transparent)', flexShrink: 0 }} className="block" />
+            <div style={{ 
+              width: 1, 
+              height: 32, 
+              background: isTransparent 
+                ? 'rgba(255,255,255,0.3)' 
+                : 'linear-gradient(to bottom, transparent, rgba(5, 150, 105, 0.2), transparent)', 
+              flexShrink: 0 
+            }} className="block" />
 
             <div className="flex flex-col flex-shrink ml-4 min-w-0 pr-2">
-              <span className={`heading-section transition-colors duration-500 ${scrolled ? '!text-[#1a0a2e]' : '!text-white'}`}
+              <span className={`heading-section transition-colors duration-500`}
                 style={{
                   fontSize: 'clamp(12px, 2vw, 17px)',
                   lineHeight: 1.1,
                   letterSpacing: '0.01em',
-                  fontWeight: 900
+                  fontWeight: 900,
+                  color: isTransparent ? '#fff' : '#1e293b'
                 }}
               >
                 Madhawi Shyam Educational Trust
               </span>
               <div className="flex items-center gap-2 mt-0.5">
-                <span className={`text-label transition-colors duration-500 !tracking-[0.1em] !lowercase italic normal-case leading-tight hidden sm:block ${scrolled ? '!text-richPurple' : '!text-white/70'}`} style={{ fontSize: 'clamp(8.5px, 1.2vw, 10px)' }}>
+                <span className={`text-label transition-colors duration-500 !tracking-[0.1em] !lowercase italic normal-case leading-tight hidden sm:block`} 
+                  style={{ 
+                    fontSize: 'clamp(8.5px, 1.2vw, 10px)',
+                    color: isTransparent ? 'rgba(255,255,255,0.8)' : '#059669'
+                  }}>
                   & International Consortium of Contemporary Biologists
                 </span>
-                <div className={`w-1 h-1 rounded-full hidden sm:block ${scrolled ? 'bg-purple-200' : 'bg-white/20'}`} />
-                <span className={`text-label transition-colors duration-500 ${scrolled ? '!text-[#999]' : '!text-white/40'}`} style={{ fontSize: 'clamp(8px, 1.1vw, 9px)', letterSpacing: '0.05em' }}>
+                <div className={`w-1 h-1 rounded-full hidden sm:block ${isTransparent ? 'bg-white/40' : 'bg-emerald-100'}`} />
+                <span className={`text-label transition-colors duration-500`} 
+                  style={{ 
+                    fontSize: 'clamp(8px, 1.1vw, 9px)', 
+                    letterSpacing: '0.05em',
+                    color: isTransparent ? 'rgba(255,255,255,0.5)' : '#999'
+                  }}>
                   ISSN: 0973-7057
                 </span>
               </div>
@@ -134,13 +153,7 @@ const Navbar = () => {
                   href={link.path}
                    onMouseEnter={() => setHovered(link.name)}
                   onMouseLeave={() => setHovered(null)}
-                  className={`text-label transition-all duration-300 ${
-                    isActive 
-                      ? (scrolled ? '!text-black font-black' : '!text-white font-black') 
-                      : (isHov 
-                          ? (scrolled ? '!text-richPurple' : '!text-white') 
-                          : (scrolled ? '!text-[#444]' : '!text-white/70'))
-                  }`}
+                  className={`text-label transition-all duration-300`}
                   style={{
                     position: 'relative',
                     padding: '8px 14px',
@@ -148,25 +161,18 @@ const Navbar = () => {
                     textDecoration: 'none',
                     whiteSpace: 'nowrap',
                     borderRadius: 10,
+                    color: isTransparent 
+                      ? (isActive || isHov ? '#fff' : 'rgba(255,255,255,0.7)')
+                      : (isActive ? '#047857' : (isHov ? '#059669' : '#64748b')),
+                    fontWeight: isActive ? 900 : 500
                   }}
                 >
                   {/* Simple text hover indicator or just color shift */}
                   {link.name}
-
-                  {/* Active sliding underline pill */}
                   {isActive && (
                     <motion.div
                       layoutId="nav-active"
-                      style={{
-                        position: 'absolute',
-                        bottom: 3,
-                        left: '50%',
-                        translateX: '-50%',
-                        width: '55%',
-                        height: 2.5,
-                        background: `linear-gradient(90deg, ${P.deepPurple}, ${P.magenta})`,
-                        borderRadius: 2,
-                      }}
+                      className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-1/2 h-0.5 rounded-full ${isTransparent ? 'bg-white' : 'bg-emerald-600'}`}
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                     />
                   )}
@@ -197,7 +203,7 @@ const Navbar = () => {
                 </motion.span>
               ) : (
                 <motion.span key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.18 }}>
-                  <Menu size={18} color={scrolled ? P.richPurple : "#fff"} />
+                  <Menu size={18} color={isTransparent ? '#fff' : P.emerald} />
                 </motion.span>
               )}
             </AnimatePresence>

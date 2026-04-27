@@ -43,7 +43,7 @@ function JournalScene() {
     <primitive
       ref={journalRef}
       object={scene}
-      scale={[1.1, 1.1, 1.1]}
+      scale={[1.45, 1.45, 1.45]}
       position={[0, -0.1, 0]}
     />
   );
@@ -86,7 +86,7 @@ export default function JournalModel3D({ className = '' }) {
       {isVisible && (
         <Canvas
           frameloop="demand"
-          camera={{ position: [0, 0, 7.5], fov: 45 }}
+          camera={{ position: [0, 0, 6], fov: 35 }}
           gl={{
             antialias: true,
             alpha: true,

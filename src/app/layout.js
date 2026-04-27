@@ -28,7 +28,11 @@ export const metadata = {
     template: '%s | BIOSPECTRA',
   },
   description: 'BIOSPECTRA is an International Biannual Refereed Journal of Life Sciences published by Madhawi Shyam Educational Trust (MSET). Reg. No. 20560/IV-1815/2005.',
-  keywords: ['Biospectra', 'Life Sciences', 'Research Journal', 'MSET', 'Zoology', 'Botany', 'Biotechnology', 'Peer Reviewed'],
+  keywords: [
+    'Biospectra', 'Life Sciences Journal', 'Biological Research', 'Academic Publication', 
+    'MSET', 'Zoology Research', 'Botany Papers', 'Biotechnology Journal', 
+    'Peer Reviewed Science', 'International Bio-Sciences Journal', 'Environmental Science Research'
+  ],
   authors: [{ name: 'Madhawi Shyam Educational Trust' }],
   creator: 'MSET',
   openGraph: {
@@ -62,6 +66,29 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${inter.variable} ${crimsonPro.variable}`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Periodical",
+              "name": "BIOSPECTRA",
+              "issn": "0973-7057",
+              "publisher": {
+                "@type": "Organization",
+                "name": "Madhawi Shyam Educational Trust (MSET)",
+                "url": "https://mset-biospectra.org"
+              },
+              "description": "International Biannual Refereed Journal of Life Sciences",
+              "url": "https://mset-biospectra.org",
+              "image": "https://mset-biospectra.org/assets/biospectra.jpg",
+              "inLanguage": "en-US",
+              "periodicity": "Biannual"
+            })
+          }}
+        />
+      </head>
       <body className="antialiased">
         <Suspense fallback={null}>
           <LoadingBar />

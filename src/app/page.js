@@ -1,7 +1,7 @@
 'use client';
 import React, { useRef, useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { motion, useMotionValue, useTransform, useSpring, AnimatePresence } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useSpring, AnimatePresence, useMotionTemplate } from 'framer-motion';
 import {
   ArrowRight, BookOpen, ShieldCheck,
   Layers, Globe, ChevronLeft, ChevronRight,
@@ -13,6 +13,7 @@ import articlesData from '@/data/articles.json';
 
 // Dynamic import to prevent SSR for the WebGL canvas
 const JournalModel3D = dynamic(() => import('@/components/common/JournalModel3D'), { ssr: false });
+const MoleculeNetwork = dynamic(() => import('@/components/common/MoleculeNetwork'), { ssr: false });
 
 // Assets
 const biospectraCover  = '/assets/biospectra.jpg';
@@ -59,21 +60,38 @@ const Home = () => {
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ['10deg', '-10deg']);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ['-10deg', '10deg']);
   
+  const mouseX = useSpring(useMotionValue(0), { stiffness: 200, damping: 30 });
+  const mouseY = useSpring(useMotionValue(0), { stiffness: 200, damping: 30 });
+  const revealSize = useSpring(0, { stiffness: 120, damping: 22 });
+
+  const maskImage = useMotionTemplate`radial-gradient(circle ${revealSize}px at ${mouseX}px ${mouseY}px, black 0%, transparent 100%)`;
+
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    const xPct = mouseX / width - 0.5;
-    const yPct = mouseY / height - 0.5;
+    const mX = e.clientX - rect.left;
+    const mY = e.clientY - rect.top;
+    
+    const xPct = mX / rect.width - 0.5;
+    const yPct = mY / rect.height - 0.5;
     x.set(xPct);
     y.set(yPct);
+    
+    mouseX.set(mX);
+    mouseY.set(mY);
+
+    // Only reveal when cursor is in the DNA zone (left 55%)
+    const inDnaZone = mX / rect.width < 0.55;
+    revealSize.set(inDnaZone ? 380 : 0);
+  };
+
+  const handleMouseEnter = () => {
+    // revealSize controlled by mouse position in handleMouseMove
   };
   
   const handleMouseLeave = () => {
     x.set(0);
     y.set(0);
+    revealSize.set(0);
   };
 
   const scroll = (direction) => {
@@ -96,278 +114,136 @@ const Home = () => {
         className="relative min-h-[100svh] w-full overflow-hidden flex flex-col justify-center"
         style={{ 
           fontFamily: 'var(--font-inter), sans-serif', 
-          paddingTop: 'calc(var(--sat, 0px) + 72px)',
         }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
       >
-        {/* DNA background image */}
+        {/* Full-Bleed Container */}
+        <div className="relative w-full h-full flex-grow overflow-hidden flex flex-col justify-center">
+        
+        {/* Green DNA Background - Bottom Layer (Stable) */}
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
           <Image
-            src="/assets/new-Landing/biospec-dna.png"
-            alt=""
+            src="/assets/new-Landing/og-green.png"
+            alt="Green DNA"
             fill
-            sizes="100vw"
-            className="object-cover object-center"
-            style={{ opacity: 0.8 }}
+            style={{ objectFit: 'cover' }}
             priority
           />
         </div>
 
-        {/* Layered gradient overlays — depth + vignette */}
-        <div className="absolute inset-0 z-[1]" style={{ background: 'linear-gradient(105deg, rgba(15,0,35,0.6) 0%, rgba(25,0,50,0.4) 45%, rgba(15,0,30,0.1) 100%)' }} />
-        
-        {/* Technical Grid Overlay */}
-        <div className="absolute inset-0 z-[1] opacity-[0.04]" 
+        {/* Purple DNA Background - Top Layer (Revealed ONLY on Cursor Hover) */}
+        <motion.div 
+          className="absolute inset-0 z-0 pointer-events-none overflow-hidden" 
           style={{ 
-            backgroundImage: `linear-gradient(to right, rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.2) 1px, transparent 1px)`,
+            WebkitMaskImage: maskImage,
+            maskImage: maskImage,
+          }} 
+        >
+          <Image
+            src="/assets/new-Landing/just-dna.png"
+            alt="Purple DNA Reveal"
+            fill
+            style={{ objectFit: 'cover' }}
+            priority
+          />
+        </motion.div>
+
+
+
+        {/* Interactive Molecule Network (Cursor Reactive) */}
+        <div className="absolute inset-0 z-[1] overflow-hidden pointer-events-none mix-blend-screen opacity-100">
+          <MoleculeNetwork />
+        </div>
+
+        {/* Technical Grid Overlay */}
+        <div className="absolute inset-0 z-[1] opacity-10 pointer-events-none" 
+          style={{ 
+            backgroundImage: `linear-gradient(to right, rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.15) 1px, transparent 1px)`,
             backgroundSize: '40px 40px'
           }} 
         />
 
-        {/* Scientific Markers & Coordinates */}
-        <div className="absolute inset-0 z-[2] overflow-hidden pointer-events-none opacity-20">
-          {/* Scale Bars */}
-          <div className="absolute top-1/4 left-8 flex items-center gap-2">
-            <div className="h-[1px] w-8 bg-white/30" />
-            <span className="text-[7px] tracking-[0.3em] uppercase text-white/40 font-mono">[ 100μm ]</span>
-          </div>
-          <div className="absolute bottom-1/4 right-10 flex items-center gap-2 rotate-90">
-            <div className="h-[1px] w-12 bg-white/30" />
-            <span className="text-[7px] tracking-[0.3em] uppercase text-white/40 font-mono">[ SCALE_REF_01 ]</span>
-          </div>
-
-          {/* Coordinate Points */}
-          <span className="absolute top-10 right-20 text-[6px] font-mono text-white/20">LAT: 23°34'N // LON: 85°18'E</span>
-          <span className="absolute bottom-20 left-12 text-[6px] font-mono text-white/20">REF_ID: BS-8.546-2024</span>
-          
-          {/* DNA Sequence Strings */}
-          <div className="absolute right-[10%] top-20 h-full w-[1px] flex flex-col gap-4 text-[6px] font-mono text-white/5 uppercase select-none leading-none">
-            {['G','A','T','C','T','A','C','G','A','T','G','C','G','A','T','G','A','T','T','A','A'].map((n, i) => <span key={i}>{n}</span>)}
-          </div>
+        {/* Giant Abstract Background Typography */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none opacity-[0.04]">
+           <div className="absolute top-[12%] left-[4%]" style={{ fontSize: 'clamp(100px, 18vw, 280px)', fontWeight: 900, lineHeight: 0.8, color: '#fff', letterSpacing: '-0.05em' }}>
+             BIO
+           </div>
+           <div className="absolute bottom-[5%] right-[4%]" style={{ fontSize: 'clamp(100px, 18vw, 280px)', fontWeight: 900, lineHeight: 0.8, color: '#fff', letterSpacing: '-0.05em' }}>
+             SCI
+           </div>
         </div>
 
-        {/* Vertical Editorial Anchor Line */}
-        <div className="absolute left-[clamp(24px,6vw,84px)] top-0 bottom-0 w-[1px] z-[2] bg-gradient-to-b from-transparent via-white/10 to-transparent hidden lg:block" />
+        {/* Global Layout Wrapper — full height flex row */}
+        <div className="relative w-full min-h-[100svh] flex flex-row items-stretch z-10">
 
-        <div className="absolute inset-0 z-[1]" style={{ background: 'radial-gradient(ellipse at 20% 50%, rgba(139,0,204,0.15) 0%, transparent 65%)' }} />
-        {/* Bottom fade so stats strip reads cleanly */}
-        <div className="absolute bottom-0 left-0 right-0 h-40 z-[2]" style={{ background: 'linear-gradient(to top, rgba(15,0,35,0.4), transparent)' }} />
+          {/* ── LEFT COLUMN: Text + CTA (vertically centered) ── */}
+          <div className="flex flex-col justify-center flex-1 w-full px-6 lg:pl-[5%] lg:pr-8 z-20 py-20 lg:py-24">
 
-        {/* Hero content — two-column on desktop */}
-        <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16 py-16 lg:py-20 flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-          
-          {/* ── LEFT: Text ── */}
-          <div className="w-full lg:flex-1 text-center lg:text-left">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.98, y: 30 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="mx-auto lg:mx-0"
-              style={{
-                position: 'relative',
-                maxWidth: 580,
-                width: '100%'
-              }}
-            >
-              
-              {/* Pill badge */}
-              <div className="inline-flex items-center gap-2 mb-8 mx-auto lg:mx-0"
-                style={{ background: 'rgba(190,0,190,0.25)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 99, padding: '5px 16px' }}>
-                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse shadow-[0_0_10px_rgba(255,255,255,0.45)] flex-shrink-0" />
-                <span className="text-label !text-white !tracking-[0.12em] !uppercase whitespace-nowrap" style={{ fontSize: 'clamp(9px, 2.3vw, 11px)' }}>
-                  International Journal of Life Sciences
-                </span>
-              </div>
+            {/* VOL label */}
+            <span className="text-white/60 font-mono tracking-[0.2em] text-[9px] lg:text-[10px] uppercase mb-4">VOL. 17 / ISS. 2</span>
 
-              {/* Main Headline */}
-              <h1 className="heading-display mb-6" 
-                style={{ 
-                  fontSize: 'clamp(38px, 8vw, 60px)',
-                  color: '#ffffff',
-                  textShadow: '0 10px 30px rgba(0,0,0,0.3)',
-                  letterSpacing: '-0.02em',
-                  lineHeight: 1
-                }}
-              >
-                BIOSPECTRA
-              </h1>
+            {/* Main Title */}
+            <h1 className="font-medium leading-none mb-4 drop-shadow-2xl" style={{ fontSize: 'clamp(48px, 7vw, 100px)', color: '#ffffff', letterSpacing: '0.05em', textShadow: '0 4px 40px rgba(255,255,255,0.35)', fontFamily: 'var(--font-crimson-pro), Georgia, serif' }}>
+              BIOSPECTRA
+            </h1>
 
-              {/* Sub label */}
-              <div className="flex items-center justify-center lg:justify-start gap-4 mb-8">
-                <div className="h-[1px] w-12 bg-white/40 hidden sm:block" />
-                <span className="text-label" style={{ fontSize: 10, letterSpacing: '0.3em', color: '#ffffff' }}>
-                  Scientific Research
-                </span>
-                <div className="h-[1px] w-12 bg-white/40 hidden sm:block lg:hidden" />
-              </div>
-
-              <p className="text-editorial text-white max-w-[480px] mb-12 mx-auto lg:mx-0" style={{ fontSize: 'clamp(12px, 1.4vw, 15px)', textShadow: '0 2px 10px rgba(0,0,0,0.2)', color: '#ffffff', lineHeight: 1.7, opacity: 0.95 }}>
-                An International Biannual Refereed Journal of Life Sciences <span className="font-bold text-white">(ISSN: 0973-7057)</span>. Dedicated to the advancement of biological scientific knowledge since 2006.
-              </p>
-
-              {/* CTA Buttons */}
-              <div className="flex items-center justify-center lg:justify-start gap-2.5 sm:gap-3 flex-nowrap mb-10">
-                <Link href="/archive" className="flex-1 sm:flex-none">
-                  <motion.button
-                    whileHover={{ scale: 1.04, y: -2 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="w-full sm:w-auto"
-                    style={{
-                      padding: '11px 22px',
-                      background: 'linear-gradient(135deg, #be00be, #8b00cc)',
-                      border: 'none',
-                      color: '#fff',
-                      fontSize: 'clamp(9px, 2.5vw, 10.5px)',
-                      fontWeight: 800,
-                      letterSpacing: '0.12em',
-                      textTransform: 'uppercase',
-                      borderRadius: 6,
-                      cursor: 'pointer',
-                      whiteSpace: 'nowrap',
-                      boxShadow: '0 6px 24px rgba(190,0,190,0.45), inset 0 1px 0 rgba(255,255,255,0.2)',
-                    }}
-                  >Explore Issues</motion.button>
-                </Link>
-                <Link href="/submit" className="flex-1 sm:flex-none">
-                  <motion.button
-                    whileHover={{ scale: 1.04, y: -2 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="w-full sm:w-auto"
-                    style={{
-                      padding: '11px 22px',
-                      background: 'rgba(255,255,255,0.15)',
-                      border: '1px solid rgba(255,255,255,0.25)',
-                      color: '#fff',
-                      fontSize: 'clamp(9px, 2.5vw, 10.5px)',
-                      fontWeight: 700,
-                      letterSpacing: '0.12em',
-                      textTransform: 'uppercase',
-                      borderRadius: 6,
-                      cursor: 'pointer',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >Submit Article</motion.button>
-                </Link>
-              </div>
-
-              {/* Stat strip inside glass */}
-              <motion.div
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.6 }}
-                className="flex items-center justify-center lg:justify-start gap-0"
-                style={{ paddingTop: 32 }}
-              >
-                {[
-                  { value: '8.546', label: 'SJIF Impact Factor', accent: '#d966d6' },
-                  { value: 'Vol. 17', label: 'Issue 2 · 2024', accent: '#a855f7' },
-                  { value: '2006', label: 'Est. Year', accent: '#7c3aed' },
-                ].map((stat, i) => (
-                  <React.Fragment key={i}>
-                    <div style={{ padding: i === 0 ? '0 28px 0 0' : '0 28px' }}>
-                      <div style={{ fontSize: 20, fontWeight: 900, color: '#fff', letterSpacing: '-0.02em', lineHeight: 1, textShadow: `0 0 20px ${stat.accent}55` }}>
-                        {stat.value}
-                      </div>
-                      <div style={{ fontSize: 8, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.7)', marginTop: 5, fontWeight: 700 }}>
-                        {stat.label}
-                      </div>
-                    </div>
-                    {i < 2 && <div style={{ width: 1, height: 32, background: 'rgba(255,255,255,0.1)', flexShrink: 0 }} />}
-                  </React.Fragment>
-                ))}
-              </motion.div>
-            </motion.div>
-          </div>
-
-          {/* ── RIGHT: Free-floating 3D Journal Model ── */}
-          <motion.div
-            initial={{ opacity: 0, x: 60, scale: 0.9 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ duration: 1.2, delay: 0.3, ease: [0.16,1,0.3,1] }}
-            className="hidden lg:flex w-full lg:w-[480px] lg:flex-shrink-0 justify-center items-center relative"
-          >
-            {/* Ambient Background Glow */}
-            <motion.div 
-              animate={{ 
-                scale: [1, 1.2, 1],
-                opacity: [0.25, 0.4, 0.25]
-              }}
-              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-              style={{
-                position: 'absolute', 
-                width: '100%',
-                height: '100%',
-                background: 'radial-gradient(circle, rgba(139,0,204,0.3) 0%, transparent 70%)',
-                filter: 'blur(40px)',
-                pointerEvents: 'none',
-                zIndex: 0
-              }} 
-            />
-
-            {/* The 3D Component */}
-            <div className="relative z-10 w-full h-[500px]">
-              <JournalModel3D />
+            {/* Subtitle */}
+            <div className="flex flex-col pl-3 lg:pl-4 border-l border-white/30 ml-1 mb-8">
+              <span className="text-white/60 font-medium tracking-[0.2em] lg:tracking-[0.3em] text-[8.5px] lg:text-[11px] leading-relaxed uppercase block">INTERNATIONAL BIANNUAL REFEREED</span>
+              <span className="text-white font-bold tracking-[0.15em] lg:tracking-[0.2em] text-[10px] lg:text-[13px] leading-tight uppercase mt-1" style={{fontFamily: 'var(--font-inter), sans-serif'}}>JOURNAL OF LIFE SCIENCES</span>
             </div>
 
-            {/* Floating SJIF badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 30, rotate: 15 }}
-              animate={{ 
-                opacity: 1,
-                y: [0, -10, 0],
-                rotate: [0, 5, 0]
-              }}
-              transition={{ 
-                opacity: { duration: 0.8, delay: 1.2 },
-                y: { duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 2 },
-                rotate: { duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 2 }
-              }}
-              style={{
-                position: 'absolute',
-                top: '15%',
-                right: '0%',
-                background: 'linear-gradient(135deg, #be00be, #8b00cc)',
-                borderRadius: 14,
-                padding: '12px 20px',
-                boxShadow: '0 10px 30px rgba(139,0,204,0.4)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-                zIndex: 20
-              }}
-            >
-              <div style={{ fontSize: 8, fontWeight: 800, color: 'rgba(255,255,255,0.8)', letterSpacing: '0.25em', textTransform: 'uppercase', textAlign: 'center', marginBottom: 4 }}>SJIF Factor</div>
-              <div style={{ fontSize: 28, fontWeight: 900, color: '#fff', lineHeight: 1, textAlign: 'center', letterSpacing: '-0.02em' }}>8.546</div>
-            </motion.div>
+            {/* CTA + SJIF */}
+            <div className="flex flex-row items-center gap-5 lg:gap-6">
+              <Link href="/archive">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-white/5 text-white border border-white/20 backdrop-blur-md font-bold tracking-[0.2em] text-[8px] lg:text-[10px] uppercase py-3 px-6 rounded shadow-[0_0_20px_rgba(255,255,255,0.05)] hover:bg-white hover:text-black transition-all flex items-center gap-3 group"
+                >
+                  <span>Explore Issues</span>
+                  <ArrowRight size={12} className="opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </motion.button>
+              </Link>
 
-            {/* Floating ISSN badge (Repositioned for 3D) */}
+              <div className="flex flex-col border-l border-white/20 pl-5 lg:pl-6 py-1">
+                <span className="text-white/40 font-mono tracking-[0.2em] text-[7px] lg:text-[8px] uppercase mb-1">IMPACT FACTOR</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-white font-black tracking-widest text-[#e8d5ff] drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] text-xs lg:text-sm leading-none">SJIF 8.546</span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#00ff88] animate-pulse shadow-[0_0_10px_rgba(0,255,136,0.6)]" />
+                </div>
+              </div>
+            </div>
+
+            {/* ISSN + Description at bottom of left col — hidden on mobile to save space */}
+            <div className="hidden sm:block mt-8 lg:mt-14 border-l border-white/20 pl-4">
+              <p className="text-white/45 text-[11px] lg:text-[12px] leading-[2] max-w-[380px] font-medium tracking-[0.04em]">
+                An International Biannual Refereed Journal of Life Sciences dedicated to the advancement of biological scientific knowledge since 2006.
+              </p>
+              <span className="text-white/50 font-mono text-[10px] mt-1 block">(ISSN: 0973-7057)</span>
+            </div>
+          </div>
+
+          {/* ── RIGHT COLUMN: 3D Book — desktop only ── */}
+          <div className="hidden lg:flex relative flex-col items-center justify-center w-[42%] shrink-0 z-10 pointer-events-none">
+            {/* Ambient Glow */}
             <motion.div
-              initial={{ opacity: 0, y: -30, rotate: -15 }}
-              animate={{ 
-                opacity: 1,
-                y: [0, 10, 0],
-                rotate: [0, -5, 0]
-               }}
-              transition={{ 
-                opacity: { duration: 0.8, delay: 1.5 },
-                y: { duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 2.5 },
-                rotate: { duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 2.5 }
-              }}
+              animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }}
+              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
               style={{
                 position: 'absolute',
-                bottom: '15%',
-                left: '-5%',
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.12)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                borderRadius: 14,
-                padding: '14px 24px',
-                boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
-                zIndex: 20,
+                width: '80%', height: '70%',
+                background: 'radial-gradient(ellipse at center, rgba(190,0,190,0.3) 0%, transparent 60%)',
+                filter: 'blur(60px)',
+                zIndex: 0,
               }}
-            >
-              <div style={{ fontSize: 8, fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 4 }}>ISSN Identification</div>
-              <div style={{ fontSize: 16, fontWeight: 800, color: '#fff', letterSpacing: '0.1em' }}>0973-7057</div>
-            </motion.div>
-          </motion.div>
+            />
+            {/* Book */}
+            <div className="relative z-10 w-[260px] sm:w-[320px] lg:w-[400px] h-[380px] lg:h-[520px] pointer-events-auto">
+              <JournalModel3D />
+            </div>
+          </div>
         </div>
 
         {/* Scroll indicator */}
@@ -384,6 +260,7 @@ const Home = () => {
             style={{ width: 1, height: 32, background: 'linear-gradient(to bottom, rgba(255,255,255,0.4), rgba(255,255,255,0))' }}
           />
         </motion.div>
+        </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════════
@@ -601,12 +478,12 @@ const Home = () => {
       {/* ══════════════════════════════════════════════════════════
           EDITORIAL HIGHLIGHTS
       ══════════════════════════════════════════════════════════ */}
-      <section style={{ background: P.neutral, borderTop: `1px solid ${P.borderSoft}`, padding: 'clamp(60px, 10vw, 120px) 0', overflow: 'hidden' }}>
-        <div style={{ maxWidth: 1600, margin: '0 auto', padding: '0 clamp(20px, 5vw, 60px)' }}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+      <section className="min-h-[100svh] flex flex-col justify-center py-20 lg:py-0" style={{ background: P.neutral, borderTop: `1px solid ${P.borderSoft}`, overflow: 'hidden' }}>
+        <div style={{ maxWidth: 1600, margin: '0 auto', padding: '0 clamp(20px, 5vw, 60px)', width: '100%' }}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-24 items-center">
 
             {/* Left side: Images (Ordered 2 on Mobile) */}
-            <div className="relative w-full max-w-[500px] mx-auto aspect-[4/3.5] order-2 lg:order-1 mt-10 lg:mt-0">
+            <div className="relative w-full max-w-[420px] mx-auto aspect-[4/3.5] order-2 lg:order-1 mt-8 lg:mt-0">
               {/* Background architectural elements */}
               <div className="absolute top-[5%] right-[5%] w-[85%] h-[85%] bg-purple-900/[0.03] border border-purple-900/10 -rotate-2" />
               <div className="absolute bottom-[5%] left-[5%] w-[75%] h-[75%] bg-purple-900/[0.02] border border-purple-900/5 rotate-1" />
@@ -639,25 +516,25 @@ const Home = () => {
             </div>
 
             {/* Right side: Text details (Ordered 1 on Mobile) */}
-            <div className="max-w-[600px] order-1 lg:order-2">
-              <div className="flex items-center gap-4 mb-6">
+            <div className="max-w-[550px] order-1 lg:order-2">
+              <div className="flex items-center gap-4 mb-4">
                 <div className="w-10 h-[1.5px] bg-accent-mid" />
                 <span className="text-label">
                   Editorial Excellence
                 </span>
               </div>
-              <h2 className="heading-section mb-6" style={{ fontSize: 'var(--font-lg)', color: P.deepPurple }}>
+              <h2 className="heading-section mb-4" style={{ fontSize: 'clamp(24px, 3vw, 32px)', color: P.deepPurple }}>
                 Guided by Academic Rigor
               </h2>
-              <p className="text-editorial text-base opacity-85 leading-relaxed">
-                Our journal is steered by a distinguished editorial board comprising leading scientists from premier global institutions, ensuring every paper meets the highest standards of scientific integrity.
+              <p className="text-editorial text-sm opacity-85 leading-relaxed mb-6">
+                Our journal is steered by a distinguished editorial board comprising leading scientists from premier global institutions.
               </p>
 
-              <div className="flex flex-col gap-5 sm:gap-6">
+              <div className="flex flex-col gap-4">
                 {[
-                  { icon: ShieldCheck, title: 'Peer-Reviewed', desc: 'A rigorous double-blind vetting process to ensure high-quality research and data integrity.' },
-                  { icon: Layers, title: 'Interdisciplinary', desc: 'Covering a broad spectrum of Life Sciences including Molecular Biology, Zoology, and Biotechnology.' },
-                  { icon: Globe, title: 'Global Reach', desc: 'Indexed and recognized worldwide for innovative contributions to modern biological research.' },
+                  { icon: ShieldCheck, title: 'Peer-Reviewed', desc: 'A rigorous double-blind vetting process ensuring research integrity.' },
+                  { icon: Layers, title: 'Interdisciplinary', desc: 'Covering Molecular Biology, Zoology, and Biotechnology.' },
+                  { icon: Globe, title: 'Global Reach', desc: 'Indexed worldwide for innovative contributions to research.' },
                 ].map((item, i) => (
                   <motion.div
                     key={i}
@@ -668,9 +545,9 @@ const Home = () => {
                     style={{
                       background: P.white,
                       border: `1px solid rgba(139,0,204,0.12)`,
-                      padding: 'clamp(20px, 4vw, 28px)',
+                      padding: 'clamp(14px, 2.5vw, 20px)',
                       display: 'flex',
-                      gap: 'clamp(16px, 3vw, 24px)',
+                      gap: 'clamp(14px, 2.5vw, 20px)',
                       alignItems: 'flex-start',
                       position: 'relative',
                     }}
@@ -678,12 +555,12 @@ const Home = () => {
                   >
                     <div style={{ position: 'absolute', left: -1, top: -1, bottom: -1, width: 3, background: `linear-gradient(to bottom, ${P.deepPurple}, ${P.magenta})`, transformOrigin: 'top', transform: 'scaleY(0)', transition: 'transform 0.5s ease' }} className="group-hover:scale-y-100" />
 
-                    <div style={{ padding: 14, background: P.lavenderMist, border: `1px solid ${P.borderSoft}`, display: 'flex', borderRadius: '4px' }}>
-                      <item.icon size={22} color={P.richPurple} />
+                    <div style={{ padding: 10, background: P.lavenderMist, border: `1px solid ${P.borderSoft}`, display: 'flex', borderRadius: '4px' }}>
+                      <item.icon size={18} color={P.richPurple} />
                     </div>
                     <div>
-                      <h4 style={{ fontFamily: 'var(--font-crimson-pro), serif', fontSize: 'clamp(17px, 2vw, 20px)', fontWeight: 800, color: P.deepPurple, marginBottom: 8, letterSpacing: '0.01em' }} className="group-hover:text-magenta transition-colors duration-300">{item.title}</h4>
-                      <p style={{ fontSize: 'clamp(12px, 1.4vw, 13px)', color: P.textBody, margin: 0, lineHeight: 1.7 }} className="opacity-90">{item.desc}</p>
+                      <h4 style={{ fontFamily: 'var(--font-crimson-pro), serif', fontSize: 'clamp(16px, 1.8vw, 18px)', fontWeight: 800, color: P.deepPurple, marginBottom: 4, letterSpacing: '0.01em' }} className="group-hover:text-magenta transition-colors duration-300">{item.title}</h4>
+                      <p style={{ fontSize: '12px', color: P.textBody, margin: 0, lineHeight: 1.5 }} className="opacity-90">{item.desc}</p>
                     </div>
                   </motion.div>
                 ))}

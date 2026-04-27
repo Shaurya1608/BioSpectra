@@ -1,17 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --text: #3d2a5a;           /* deep purple-slate */
-  --text-h: #1a0a2e;         /* near-black purple */
-  --bg: #fdfcff;             /* white with purple whisper */
-  --border: #e9e0f5;         /* soft lavender border */
-  --accent: #8b00cc;         /* vivid purple */
-  --accent-mid: #6200a8;     /* deep rich purple */
-  --accent-dark: #2d0057;    /* near-black purple */
-  --accent-magenta: #c400c4; /* magenta-purple from cover */
-  --accent-soft: rgba(139, 0, 204, 0.06);
-  --purple-light: #f5eeff;   /* barely-there lavender */
-  --purple-mist: #ede0ff;    /* lavender mist for sections */
+  --text: #1e293b;           /* slate-900 */
+  --text-h: #0f172a;         /* slate-950 */
+  --bg: #f8fafc;             /* slate-50 */
+  --border: #e2e8f0;         /* slate-200 */
+  --accent: #7c3aed;         /* violet-600 */
+  --accent-mid: #6d28d9;     /* violet-700 */
+  --accent-dark: #4c1d95;    /* violet-900 */
+  --accent-green: #059669;    /* emerald-600 */
+  --accent-green-dark: #064e3b; /* emerald-900 */
+  --accent-magenta: #be185d; /* pink-700 */
+  --accent-soft: rgba(124, 58, 237, 0.06);
+  --purple-light: #f5f3ff;   /* violet-50 */
+  --green-light: #f0fdf4;    /* emerald-50 */
 
   /* Typography Tokens */
   --font-display: var(--font-crimson-pro), serif;
